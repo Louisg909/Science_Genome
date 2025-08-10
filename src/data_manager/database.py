@@ -1,4 +1,5 @@
-"""data_manager.database
+"""Database Core.
+data_manager.database
 =================================
 
 Minimal SQLite wrapper used by tests and examples.  The module exposes a
@@ -19,6 +20,7 @@ insertion.
 from __future__ import annotations
 
 import sqlite3
+from pathlib import Path
 from typing import Dict
 
 
@@ -27,53 +29,62 @@ from typing import Dict
 # ---------------------------------------------------------------------------
 # Each entry is a ``CREATE TABLE`` statement.  ``init_db`` iterates over this
 # dictionary to ensure all tables exist.
-SCHEMA: Dict[str, str] = {
-    "papers": (
-        "CREATE TABLE IF NOT EXISTS papers ("
-        "doi TEXT PRIMARY KEY,"
-        "title TEXT,"
-        "abstract TEXT,"
-        "authors TEXT,"
-        "categories TEXT,"
-        "date TEXT"
-        ")"
-    ),
-    "citations": (
-        "CREATE TABLE IF NOT EXISTS citations ("
-        "citing_doi TEXT,"
-        "cited_doi TEXT,"
-        "PRIMARY KEY (citing_doi, cited_doi)"
-        ")"
-    ),
-    # New table used to persist embedding vectors serialized as pickled
-    # blobs.  ``doi`` is the primary key so repeated inserts behave as
-    # upserts when using ``INSERT OR REPLACE``.
-    "embeddings": (
-        "CREATE TABLE IF NOT EXISTS embeddings ("
-        "doi TEXT PRIMARY KEY,"
-        "vector BLOB"
-        ")"
-    ),
-}
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS papers (
+    doi TEXT PRIMARY KEY,
+    title TEXT,
+    abstract TEXT,
+    authors TEXT,
+    categories TEXT,
+    date TEXT
+);
 
+CREATE TABLE IF NOT EXISTS citations (
+    citing_doi TEXT NOT NULL,
+    cited_doi TEXT NOT NULL,
+    PRIMARY KEY (citing_doi, cited_doi),
+    FOREIGN KEY (citing_doi) REFERENCES papers(doi),
+    FOREIGN KEY (cited_doi) REFERENCES papers(doi)
+);
+
+CREATE TABLE IF NOT EXISTS embeddings (
+    doi TEXT PRIMARY KEY,
+    vector BLOB,
+    FOREIGN KEY (doi) REFERENCES papers(doi)
+);
+"""
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-def init_db(db_path: str) -> sqlite3.Connection:
+def init_db(db_path: Path | str) -> sqlite3.Connection:
     """Initialise the SQLite database and return an open connection.
+    Path to the SQLite database file.  The file is created if it does not
+        already exist.
 
     Parameters
     ----------
     db_path:
-        Path to the SQLite database file.  The file is created if it does not
-        already exist.
+
+        Path to the database file.
+
+    Returns
+    -------
+    sqlite3.Connection
+        An open connection to the initialised database.
     """
 
     conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
-    for statement in SCHEMA.values():
-        cur.execute(statement)
-    conn.commit()
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
+    conn.executescript(SCHEMA)
+  
+#  Or the following, I don't know which is best or which to do
+#     cur = conn.cursor()
+#     for statement in SCHEMA.values():
+#         cur.execute(statement)
+#     conn.commit()
     return conn
-
+  
+  
+__all__ = ["init_db", "SCHEMA"]
