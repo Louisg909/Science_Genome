@@ -1,18 +1,24 @@
+"""Command line interface for the project.
+
+The CLI is intentionally lightweight – only a bare ``Typer`` application is
+exposed so tests can invoke ``--help``.  Additional commands can be registered
+as the project grows.
 """
-CLI Module.
 
-Purpose:
-    Central orchestration entry point for all workflows (scraping, embedding, analysis, visualisation).
+from __future__ import annotations
 
-Goals:
-    - Provide a single, coherent CLI using Typer/Click.
-    - Expose commands: scrape, embed, analyze, visualise.
-    - Offer professional usage messages, error handling, and logging.
+import typer
 
-Inputs:
-    - Command-line arguments and flags (e.g., query terms, paths).
+app = typer.Typer(add_completion=False)
 
-Outputs:
-    - Console feedback and logs.
-    - Invocation of downstream modules (DB writes, plots, etc.).
-"""
+
+@app.callback()
+def main() -> None:
+    """Science Genome command line interface."""
+    # The body is intentionally empty; the callback exists to provide a help
+    # message when ``--help`` is invoked.
+    pass
+
+
+__all__ = ["app"]
+

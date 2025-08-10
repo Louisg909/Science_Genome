@@ -21,7 +21,6 @@ from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
-from typing import Dict
 
 
 # ---------------------------------------------------------------------------
@@ -78,12 +77,6 @@ def init_db(db_path: Path | str) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.executescript(SCHEMA)
-  
-#  Or the following, I don't know which is best or which to do
-#     cur = conn.cursor()
-#     for statement in SCHEMA.values():
-#         cur.execute(statement)
-#     conn.commit()
     return conn
   
   
