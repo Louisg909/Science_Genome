@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import pickle
 import sqlite3
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 # ---------------------------------------------------------------------------
@@ -29,13 +29,10 @@ def add_paper(conn: sqlite3.Connection, paper: Dict[str, Any]) -> None:
     Parameters
     ----------
     conn:
-        Active/open SQLite connection.
+        Active SQLite connection.
     paper:
-        Mapping containing at least the ``doi`` key.  Extra keys are ignored.
-    paper:
-        Mapping containing paper metadata. Expected keys are
-        ``doi``, ``title``, ``abstract``, ``authors``, ``categories`` and
-        ``date``.
+        Mapping containing at least ``doi``; other fields are optional and
+        ignored if missing.
     """
 
     with conn:
@@ -53,16 +50,14 @@ def add_paper(conn: sqlite3.Connection, paper: Dict[str, Any]) -> None:
         )
 
 
-def get_paper(conn: sqlite3.Connection, doi: str) -> Optional[Dict[str, str]]:
 def get_paper(conn: sqlite3.Connection, doi: str) -> Optional[Dict[str, Any]]:
     """Fetch a paper by DOI.
 
-    Returns ``None`` if the DOI is unknown."""
+    Returns ``None`` if the DOI is unknown.
+    """
 
     cur = conn.execute("SELECT * FROM papers WHERE doi = ?", (doi,))
     row = cur.fetchone()
-    # keys = ["doi", "title", "abstract", "authors", "categories", "date"]
-    # return dict(zip(keys, row))
     return dict(row) if row else None
 
 
@@ -110,6 +105,8 @@ def add_embedding(conn: sqlite3.Connection, doi: str, vector: Any) -> None:
 
     blob = pickle.dumps(vector)
     with conn:
+        # Ensure a stub paper row exists so the foreign key constraint passes.
+        conn.execute("INSERT OR IGNORE INTO papers (doi) VALUES (?)", (doi,))
         conn.execute(
             "INSERT OR REPLACE INTO embeddings (doi, vector) VALUES (?, ?)",
             (doi, blob),

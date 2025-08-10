@@ -1,18 +1,34 @@
+"""Minimal embedding utilities.
+
+The real project would load heavy language models here.  For the purposes of
+the exercises and tests we only provide lightweight stubs that can be patched
+in tests.
 """
-Embedder.
 
-Purpose:
-    Wrap SciBERT (or other models) to generate paper embeddings.
+from __future__ import annotations
 
-Goals:
-    - Batch processing for throughput.
-    - Pluggable model architecture.
-    - Deterministic, reproducible embeddings.
+from typing import Any
 
-Inputs:
-    - Cleaned text (title + abstract).
 
-Outputs:
-    - Dense vectors (numpy arrays or torch tensors).
-    - Embeddings saved to database with DOI linkage.
-"""
+def load_model() -> Any:  # pragma: no cover - placeholder
+    """Return a handle to the embedding model.
+
+    The default implementation raises ``NotImplementedError`` to make the
+    intent explicit; tests patch this function with a mock model.
+    """
+
+    raise NotImplementedError("Model loading not implemented")
+
+
+def embed_text(model: Any, text: str) -> Any:  # pragma: no cover - placeholder
+    """Embed ``text`` using ``model``.
+
+    The stub raises ``NotImplementedError``; tests replace it with a simple
+    lambda returning a fixed vector.
+    """
+
+    raise NotImplementedError("Embedding not implemented")
+
+
+__all__ = ["load_model", "embed_text"]
+
