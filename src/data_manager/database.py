@@ -1,10 +1,34 @@
-"""Database Core."""
+"""Database Core.
+data_manager.database
+=================================
+
+Minimal SQLite wrapper used by tests and examples.  The module exposes a
+``SCHEMA`` dictionary containing ``CREATE TABLE`` statements and an
+``init_db`` helper that applies the schema to a new or existing database
+file.  The schema is intentionally small – just enough to store paper
+metadata, citation edges and, for the purposes of this exercise, document
+embeddings.
+
+Embeddings are stored as **BLOBs** using Python's :mod:`pickle` to serialize
+arbitrary vector objects.  Pickle is convenient and works for ``list``s or
+:mod:`numpy` arrays, but the resulting binary strings can be large.  When
+storing many high dimensional vectors, the database file can grow quickly;
+callers may want to consider dimensionality reduction or compression before
+insertion.
+"""
 
 from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
+from typing import Dict
 
+
+# ---------------------------------------------------------------------------
+# Schema
+# ---------------------------------------------------------------------------
+# Each entry is a ``CREATE TABLE`` statement.  ``init_db`` iterates over this
+# dictionary to ensure all tables exist.
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS papers (
     doi TEXT PRIMARY KEY,
@@ -30,13 +54,18 @@ CREATE TABLE IF NOT EXISTS embeddings (
 );
 """
 
-
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 def init_db(db_path: Path | str) -> sqlite3.Connection:
-    """Initialise the SQLite database and return a connection.
+    """Initialise the SQLite database and return an open connection.
+    Path to the SQLite database file.  The file is created if it does not
+        already exist.
 
     Parameters
     ----------
     db_path:
+
         Path to the database file.
 
     Returns
@@ -49,8 +78,13 @@ def init_db(db_path: Path | str) -> sqlite3.Connection:
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
     conn.executescript(SCHEMA)
+  
+#  Or the following, I don't know which is best or which to do
+#     cur = conn.cursor()
+#     for statement in SCHEMA.values():
+#         cur.execute(statement)
+#     conn.commit()
     return conn
-
-
+  
+  
 __all__ = ["init_db", "SCHEMA"]
-
