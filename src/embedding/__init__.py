@@ -1,21 +1,7 @@
-"""Embedding utilities."""
+"""Embedding utilities package."""
 
-from .embedder import (
-    SciBERTEmbedder,
-    load_model,
-    embed_text,
-    embed_text_async,
-    to_binary,
-    from_binary,
-    translate,
-)
+# Submodules are exposed lazily to avoid importing heavy dependencies such as
+# ``transformers`` when not required.  They can be imported directly via
+# ``from src.embedding import embedder`` or ``utils``.
 
-__all__ = [
-    "SciBERTEmbedder",
-    "load_model",
-    "embed_text",
-    "embed_text_async",
-    "to_binary",
-    "from_binary",
-    "translate",
-]
+__all__ = ["embedder", "utils"]

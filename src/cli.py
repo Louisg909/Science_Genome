@@ -9,7 +9,10 @@ from __future__ import annotations
 
 import typer
 
+from .data_manager import commands as db_commands
+
 app = typer.Typer(add_completion=False)
+app.add_typer(db_commands.app, name="db")
 
 
 @app.callback()
