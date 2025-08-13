@@ -21,13 +21,27 @@ pip install -r requirements.txt
 ```
 
 ## CLI Usage
-A minimal [Typer](https://typer.tiangolo.com/) command line interface is exposed for interacting with the project. Use the Typer runner to inspect available commands:
+The project exposes a small [Typer](https://typer.tiangolo.com/)-powered CLI.
+Database maintenance commands live under the `db` subcommand. Run the
+following for a list of options:
 
 ```bash
-python -m typer src.cli run --help
+python -m src.cli --help
+python -m src.cli db --help
 ```
 
-This prints the top-level help message and lists subcommands as they are added.
+Typical database workflow:
+
+```bash
+# Initialise the SQLite database
+python -m src.cli db init --db science.db
+
+# Show table counts
+python -m src.cli db stats --db science.db
+
+# Clear all data (use --yes to skip confirmation)
+python -m src.cli db clear --db science.db --yes
+```
 
 ## Citation DAG Example
 The storage layer exposes a `citations` table that can be used to build a citation graph. The snippet below shows how to record citations and load them into a directed acyclic graph (DAG) using `networkx`:

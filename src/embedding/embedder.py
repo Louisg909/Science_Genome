@@ -10,22 +10,28 @@ translated to and from raw bytes for compact storage.
 from __future__ import annotations
 
 import asyncio
-from typing import Iterable
+from typing import Iterable, TYPE_CHECKING
 
 import numpy as np
-import torch
-from transformers import AutoModel, AutoTokenizer
+
+try:  # pragma: no cover - optional heavy dependency
+    import torch
+except Exception:  # pragma: no cover - fallback when torch missing
+    torch = None  # type: ignore
+
+try:  # pragma: no cover - optional heavy dependency
+    from transformers import AutoModel, AutoTokenizer
+except Exception:  # pragma: no cover - fallback when transformers missing
+    AutoModel = AutoTokenizer = None  # type: ignore
 
 
 class SciBERTEmbedder:
-    """Generate text embeddings using SciBERT.
-
-    The embedder focuses on the ``[CLS]`` token representation which provides a
-    single fixed-size vector per input.  The heavy model is loaded once during
-    initialisation and kept in evaluation mode.
-    """
+    """Generate text embeddings using SciBERT."""
 
     def __init__(self) -> None:
+        if AutoModel is None or AutoTokenizer is None or torch is None:  # pragma: no cover - run-time guard
+            raise RuntimeError("SciBERT dependencies are not installed")
+
         self.tokenizer = AutoTokenizer.from_pretrained(
             "allenai/scibert_scivocab_uncased"
         )
@@ -67,10 +73,14 @@ async def embed_text_async(model: SciBERTEmbedder, text: str) -> np.ndarray:
     return await model.embed_async(text)
 
 
-def to_binary(embedding: Iterable[float] | np.ndarray | torch.Tensor) -> bytes:
+if TYPE_CHECKING:  # pragma: no cover
+    import torch as _torch
+
+
+def to_binary(embedding: Iterable[float] | np.ndarray | "_torch.Tensor") -> bytes:
     """Convert an embedding array to raw ``bytes``."""
 
-    if isinstance(embedding, torch.Tensor):
+    if torch is not None and isinstance(embedding, torch.Tensor):
         embedding = embedding.detach().cpu().numpy()
     array = np.asarray(embedding, dtype=np.float32)
     return array.tobytes()
