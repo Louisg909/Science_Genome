@@ -1,64 +1,82 @@
-# Science_Genome
+# Science_Genome (lean edition)
 
-## Overview
-Science_Genome explores the evolution of scientific ideas by treating the literature as a pseudo-genome. Papers are embedded with transformer models and linked through a citation "family tree" to analyse how concepts change over time.
+This project provides a tiny, end-to-end pipeline for exploring scientific papers:
 
-<div style="display: flex; gap: 1rem; align-items: center;">
-  <img src="assets/embedding.png" alt="Embedding diagram" style="width: 48%;" />
-  <img src="assets/basic_tree.png" alt="Tree diagram" style="width: 48%;" />
-</div>
+1. **Scrape** paper titles, abstracts, and references from the ArXiv Atom feed.
+2. **Embed** the papers with SciBERT sentence representations (or inject your own model for testing).
+3. **Reduce** the embedding dimensionality (PCA/TSNE/UMAP) for visual inspection.
+4. **Analyse** similarities and nearest neighbours between papers.
+5. **Visualise** the reduced points on a simple scatter plot.
 
-## Project Goals
-- Map research papers into a high-dimensional embedding space.
-- Build and analyse citation graphs to trace the lineage of ideas.
-- Provide tooling for embedding, dimensionality reduction and visualisation.
+## Scope
 
-## Installation
+**Included**
+
+- ArXiv scraping for titles, abstracts, and references.
+- SciBERT-based embedding with optional model/tokenizer injection.
+- Dimensionality reduction via PCA, t-SNE, and UMAP.
+- Basic structure analysis (similarity matrix and nearest neighbours).
+- Simple scatter plot visualisations of reduced embeddings.
+- JSON-based corpus persistence and reload.
+
+**Not included**
+
+- Command-line interfaces, web apps, or notebooks.
+- Databases, schedulers, or background job systems.
+- Advanced analytics beyond neighbour similarity (e.g., clustering, graph metrics).
+- Interactive or network visualisations.
+- Non-Python implementations or alternative embedding models beyond SciBERT.
+
+## Quick start
+
 ```bash
-git clone <repository-url>
-cd Science_Genome
 pip install -r requirements.txt
+pytest
 ```
 
-## CLI Usage
-The project exposes a small [Typer](https://typer.tiangolo.com/)-powered CLI.
-Database maintenance commands live under the `db` subcommand. Run the
-following for a list of options:
+## Navigating the repository
 
-```bash
-python -m src.cli --help
-python -m src.cli db --help
-```
+- `src/` holds all runtime code, grouped by task: `scraping`, `embedding`, `dimension_reduction`, `analysis`, `visualisation`, and `storage`.
+- `tests/` contains focused unit tests mirroring the `src/` layout to show expected behaviour for each step of the pipeline.
+- `assets/` can be used to store generated plots or intermediate artifacts you want to keep out of source directories.
+- `requirements.txt` lists the minimal dependencies needed to run and test the pipeline.
 
-Typical database workflow:
+## How to use the pipeline
 
-```bash
-# Initialise the SQLite database
-python -m src.cli db init --db science.db
+1. Scrape papers: `python - <<'PY'
+from src.scraping.arxiv import fetch_arxiv_papers
+papers = fetch_arxiv_papers(max_results=10)
+PY`
+2. Persist the corpus so you can avoid re-scraping: `python - <<'PY'
+from src.storage import save_papers
+save_papers(papers, "corpus.json")
+PY`
+3. Load saved papers later: `python - <<'PY'
+from src.storage import load_papers
+papers = load_papers("corpus.json")
+PY`
+4. Embed, reduce, analyse, and plot: `python - <<'PY'
+from src.embedding.basic import embed_papers
+from src.dimension_reduction.basic import reduce_embeddings
+from src.analysis.structure import nearest_neighbours
+from src.visualisation.plots import scatter_plot
 
-# Show table counts
-python -m src.cli db stats --db science.db
+embeddings = embed_papers(papers)
+reduced = reduce_embeddings(embeddings, method="pca", n_components=2)
+neighbours = nearest_neighbours(embeddings, k=3)
+scatter_plot(reduced, papers, output_path="assets/plot.png")
+PY`
 
-# Clear all data (use --yes to skip confirmation)
-python -m src.cli db clear --db science.db --yes
-```
+## How to extend or add to the repo
 
-## Citation DAG Example
-The storage layer exposes a `citations` table that can be used to build a citation graph. The snippet below shows how to record citations and load them into a directed acyclic graph (DAG) using `networkx`:
+- Keep additions minimal and focused on the core workflow (scrape → embed → reduce → analyse → visualise).
+- Place new functionality beside related modules in `src/` and mirror coverage in `tests/`.
+- Update `requirements.txt` if dependencies change, and add concise usage notes to this README when introducing new capabilities.
 
-```python
-from src.data_manager import database, storage
-import networkx as nx
-
-conn = database.init_db("science.db")
-
-storage.add_paper(conn, {"doi": "10.1/A"})
-storage.add_paper(conn, {"doi": "10.1/B"})
-storage.add_citation(conn, "10.1/A", "10.1/B")
-
-G = nx.DiGraph()
-for edge in storage.get_citations(conn):
-    G.add_edge(edge["citing_doi"], edge["cited_doi"])
-```
-
-`G` now contains the citation relationships and can be analysed or visualised as needed.
+## Core modules
+- `src/scraping/arxiv.py` – fetch and parse ArXiv feeds into `Paper` objects.
+- `src/embedding/basic.py` – convert papers to SciBERT embeddings (configurable tokenizer/model).
+- `src/dimension_reduction/basic.py` – reduce embedding dimensions with PCA, t-SNE, or UMAP.
+- `src/analysis/structure.py` – compute similarity matrices and nearest neighbours.
+- `src/visualisation/plots.py` – plot reduced embeddings with titles as labels.
+- `src/storage.py` – save/load scraped papers to JSON so you can reuse a local corpus.
