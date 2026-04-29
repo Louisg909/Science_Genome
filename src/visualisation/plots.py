@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Iterable, Optional
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from src.models import Paper
 

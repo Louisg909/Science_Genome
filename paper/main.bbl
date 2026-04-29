@@ -1,0 +1,48 @@
+\begin{thebibliography}{1}
+
+\bibitem{Beltagy2019}
+Iz~Beltagy, Kyle Lo, and Arman Cohan.
+\newblock Scibert: A pretrained language model for scientific text.
+\newblock In {\em Proceedings of the 2019 Conference on Empirical Methods in
+  Natural Language Processing (EMNLP) and the 9th International Joint
+  Conference on Natural Language Processing (IJCNLP)}, pages 3615--3620.
+  Association for Computational Linguistics, 2019.
+
+\bibitem{Bornmann2014}
+Lutz Bornmann.
+\newblock Do altmetrics point to the broader impact of research? an overview of
+  benefits and disadvantages of altmetrics.
+\newblock {\em Journal of Informetrics}, 8(4):895--903, 2014.
+
+\bibitem{Callaham2002}
+Michael Callaham, Robert~L. Wears, and Ellen Weber.
+\newblock Journal prestige, publication bias, and other characteristics
+  associated with citation of published studies in peer-reviewed journals.
+\newblock {\em JAMA}, 287(21):2847--2850, 2002.
+
+\bibitem{Kuhn1962}
+Thomas~S. Kuhn.
+\newblock {\em The Structure of Scientific Revolutions}.
+\newblock University of Chicago Press, 1962.
+
+\bibitem{Medoff2006}
+Marshall~H. Medoff.
+\newblock Evidence of a harvard and chicago matthew effect.
+\newblock {\em Journal of Economic Methodology}, 13(4):485--506, 2006.
+
+\bibitem{Mingers2015}
+John Mingers and Loet Leydesdorff.
+\newblock A review of theory and practice in scientometrics.
+\newblock {\em European Journal of Operational Research}, 246(1):1--19, 2015.
+
+\bibitem{Nath2021}
+A.~Nath and S.~Jana.
+\newblock A scientometric review of global altmetrics research.
+\newblock {\em Science \& Technology Libraries}, 40(3):325--340, 2021.
+
+\bibitem{Wang2014}
+Jian Wang.
+\newblock Unpacking the matthew effect in citations.
+\newblock {\em Journal of Informetrics}, 8(2):329--339, 2014.
+
+\end{thebibliography}
