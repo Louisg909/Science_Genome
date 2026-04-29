@@ -1,29 +1,24 @@
-Science Genome is scoped as a research framework for studying the flow and evolution of scientific ideas. The project objective is not paper discovery or citation search; it is analysis of idea lineage, inheritance, emergence, divergence, convergence, and author or stream contribution within scientific knowledge systems.
+Scientific progress emerges through reuse, adaptation, and recombination of prior ideas. Citation networks record part of this process, but citation counts and centrality metrics alone do not reveal how much intellectual content is inherited from predecessors versus newly contributed by a paper.
 
-This artifact seals that scope by defining the framework in a form that can be read, evaluated, and applied without external project documents. It therefore serves as both publication-ready manuscript content and project-level completion record.
+This work formalizes a content-aware framework for that distinction. Each paper is represented in a shared semantic space and approximated as a constrained mixture of cited-parent embeddings plus a residual term. The mixture weights encode lineage-specific inheritance, while the residual captures contribution not attributable to cited predecessors.
 
-\subsection{Scope commitments captured by this artifact}
-The framework specified here addresses the full in-scope objective set:
+\subsection{Problem focus}
+The framework is designed to support analysis of:
 \begin{itemize}
-    \item Representation of scientific artifacts and their relationships.
-    \item Joint semantic and lineage analysis.
-    \item Interpretable evidence for idea-flow hypotheses.
-    \item Comparative analysis across branches, domains, and streams.
-    \item Explicit verification and validation (V\&V).
-    \item Reproducible, auditable research outputs.
+    \item idea lineage and parent dependence,
+    \item persistence and transformation of semantic traits,
+    \item divergence and convergence across branches,
+    \item and cross-domain transfer of methods or concepts.
 \end{itemize}
 
-\subsection{Out-of-scope protections}
-To preserve scientific validity, this artifact explicitly excludes product expansion goals that are not required for core research questions. It does not claim causal proof of influence, does not replace expert interpretation, and does not bind the framework to any single implementation family.
+\subsection{Research stance}
+The objective is analytical interpretation, not causal proof of influence. Inheritance and contribution factors are evidential signals that require uncertainty-aware reading and expert contextualization.
 
-\subsection{Role of this paper in project completion}
-This paper is the final standalone artifact for the defined scope. It codifies:
+\subsection{Contributions of this paper}
+This paper delivers a final, standalone specification by providing:
 \begin{itemize}
-    \item the conceptual model,
-    \item the formal estimation problem,
-    \item the interpretation policy,
-    \item the V\&V protocol,
-    \item and the limitations required for responsible use.
+    \item a formal decomposition model for inherited and residual semantic content,
+    \item an estimation procedure with interpretability-preserving constraints,
+    \item a verification and validation protocol for trustworthy use,
+    \item and interpretation guardrails for responsible scientometric analysis.
 \end{itemize}
-
-Any compliant implementation can be evaluated against these definitions. In this way, the artifact completes the project scope at the research-framework level while remaining implementation-agnostic.

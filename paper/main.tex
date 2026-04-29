@@ -12,39 +12,39 @@
 
 \begin{document}
 
-\title{Science Genome: Final Research Framework and Validation Artifact}
+\title{A Pseudo-Genetic Framework for Scientific Publications}
 
 \author{Louis~George%
-\thanks{This manuscript is the final standalone artifact for the Science Genome project scope.}
+\thanks{Manuscript prepared as the final standalone artifact of the Science Genome research project.}
 }
 
 \maketitle
 
 \begin{abstract}
-This document is the final research artifact for the Science Genome project. It defines a complete, standalone framework for analyzing how scientific ideas are inherited, transformed, and recombined across publication lineages. The framework combines semantic representations of papers with time-respecting citation structure to separate inherited content from residual contribution. It specifies model assumptions, estimation constraints, interpretation rules, and verification-and-validation requirements so outputs can be scrutinized as research evidence rather than treated as opaque scores. The artifact also formalizes scope boundaries, quality criteria, and reproducibility expectations needed to use the framework as a publishable and inspectable basis for idea-flow analysis.
+This paper presents a standalone framework for analyzing how scientific ideas are inherited, transformed, and recombined across publication lineages. Publications are represented in a shared semantic space and decomposed into inherited content explained by cited predecessors plus residual contribution not explained by those predecessors. The framework combines constrained inheritance inference on a time-respecting citation graph with explicit verification and validation procedures, enabling interpretable edge-level and node-level analysis of knowledge flow. The result is a publishable, implementation-agnostic specification for content-aware scientometric analysis that supports lineage tracing, novelty assessment, and reproducible research interpretation.
 \end{abstract}
 
 \begin{multicols}{2}
 
-\section{Project Scope Alignment}
+\section{Introduction}
 \input{sections/intro.tex}
 
-\section{Related Foundations}\label{sec:related}
+\section{Related Work}\label{sec:related}
 \input{sections/related_work.tex}
 
-\section{Framework Specification}\label{sec:method}
+\section{Method}\label{sec:method}
 \input{sections/method.tex}
 
-\section{Verification and Validation Protocol}\label{sec:experiments}
+\section{Evaluation Protocol}\label{sec:experiments}
 \input{sections/experiments.tex}
 
-\section{Interpretation and Use Boundaries}\label{sec:discussion}
+\section{Discussion}\label{sec:discussion}
 \input{sections/discussion.tex}
 
-\section{Limitations and Guardrails}\label{sec:lim_future}
+\section{Limitations}\label{sec:lim_future}
 \input{sections/future.tex}
 
-\section{Finalization Statement}\label{sec:conclusion}
+\section{Conclusion}\label{sec:conclusion}
 \input{sections/conclusion.tex}
 
 \end{multicols}
