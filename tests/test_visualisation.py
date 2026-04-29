@@ -12,3 +12,12 @@ def test_scatter_embeddings_returns_figure():
     reduced = np.array([[0.0, 1.0], [1.0, 0.0]])
     fig = scatter_embeddings(reduced, papers)
     assert fig.axes[0].get_xlabel() == "Component 1"
+
+
+def test_scatter_embeddings_imported_from_visualisation_package_runs():
+    from src.visualisation import scatter_embeddings as top_level_scatter_embeddings
+
+    papers = [Paper(title="A", abstract="alpha", references=[]), Paper(title="B", abstract="beta", references=[])]
+    reduced = np.array([[0.0, 1.0], [1.0, 0.0]])
+    fig = top_level_scatter_embeddings(reduced, papers)
+    assert fig is not None
