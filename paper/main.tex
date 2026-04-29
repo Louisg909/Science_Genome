@@ -1,37 +1,44 @@
-\documentclass[lettersize,journal]{IEEEtran}
-\usepackage{amsmath,amsfonts}
-\usepackage{algorithmic}
-\usepackage{algorithm}
+% \documentclass[lettersize,journal]{IEEEtran} ieee packages and stuff should be re-instated in final export. Working copy is kept lean. Bellow is things that are for the working copy and not final export:
+
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{multicol}
+% end temp packages
+
+
+\usepackage{amsmath,amsfonts,amssymb}
+% \usepackage{algorithmic} % ieee tooling
+% \usepackage{algorithm} % ieee tooling
 \usepackage{array}
 \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
 \usepackage{textcomp}
-\usepackage{stfloats}
+% \usepackage{stfloats} % ieee fonts
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 \usepackage{verbatim}
 \usepackage{graphicx}
-\usepackage{cite}
-\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+% \usepackage{cite} % ieee tooling
+% \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 % updated with editorial comments 8/9/2021
 
 % IEEE Transactions on Knowledge and Data Engineering | Original Research
 
 \begin{document}
 
-\title{A Psuedo-Genetic Framework for Scientific Publications}
+\title{A Pseudo-Genetic Framework for Scientific Publications}
 
-\author{Louis George,~\IEEEmembership{Staff,~IEEE,}
+\author{Louis George} %,~\IEEEmembership{Staff,~IEEE,}
         % <-this % stops a space
-\thanks{Thanks to Dr Jens Christian Claussen, whose supervisions and discussions with laid the seed for the ideas behind this paper.}% <-this % stops a space
+% \thanks{Thanks to Dr Jens Christian Claussen, whose supervisions and discussions with laid the seed for the ideas behind this paper.}% <-this % stops a space
 % \thanks{Dedicated to a Miss Maddison Daisy Taylor. I miss you.}%
-\thanks{Manuscript received December 19, 2025; revised April 16, 2021.}}
+% \thanks{Manuscript received December 19, 2025; revised April 16, 2021.}}
 
 
 % The paper headers
-\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2021}%
-{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+% \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2021}%
+% {Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
 
-\IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
+% \IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
 % Remember, if you use this you must call \IEEEpubidadjcol in the second
 % column for its text to clear the IEEEpubid mark.
 
@@ -41,16 +48,20 @@
 Abstract goes here bro
 \end{abstract}
 
-\begin{IEEEkeywords}
-% Article submission, IEEE, IEEEtran, journal, \LaTeX, paper, template, typesetting.
-% Author contribution, inheritance factor,
-To populate at the end :)
-\end{IEEEkeywords}
+% \begin{IEEEkeywords}
+% % Article submission, IEEE, IEEEtran, journal, \LaTeX, paper, template, typesetting.
+% % Author contribution, inheritance factor,
+% To populate at the end :)
+% \end{IEEEkeywords}
 
 % \section{Goal}
 % The objective of this study is to formalize and evaluate a semantic, inheritance-based framework for measuring research contribution. We: (i) define an inheritance factor quantifying how much a paper's content derives from its cited predecessors; (ii) empirically evaluate this factor across a 5,000-paper corpus, comparing it against citation and network-based measures; and (iii) demonstrate its utility for identifying high-contribution papers and mapping knowledge evolution
 
 % ===================== MAIN ===================
+
+% only for temp
+\begin{multicols}{2}
+% end temp
 
 \section{Introduction}
 \input{sections/intro.tex}
@@ -81,8 +92,11 @@ Interpretation, impact
 \section{Conclusion}\label{sec:conclusion}
 \input{sections/conclusion.tex}
 
+% temp only
+\end{multicols}
+% end temp
 
-\bibliographystyle{IEEEtran}
+\bibliographystyle{plain} % \bibliographystyle{IEEEtran} ieee style
 \bibliography{references}
 
 
