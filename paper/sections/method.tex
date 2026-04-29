@@ -1,38 +1,51 @@
-\subsection{Construction of Science Space}
+\subsection{Overview}
+The method has four stages: (1) construct a semantically embedded paper corpus, (2) build a time-respecting citation DAG, (3) estimate inheritance weights from cited parents to each focal paper, and (4) derive contribution and lineage statistics from the fitted decomposition.
 
-\subsection{Construction of DAG}
+\subsection{Construction of science space}
+Let each paper $p_i$ be represented by title and abstract text. We encode this text using SciBERT to obtain an embedding $\mathbf{e}_i \in \mathbb{R}^d$. Embeddings are $\ell_2$-normalized to stabilize cosine geometry and reduce scale effects between documents of different length.
 
+To improve robustness, we apply light preprocessing (Unicode normalization, citation-marker removal, and deduplication by identifier). We then compute corpus-level diagnostics (norm distribution, nearest-neighbor density, and year-stratified centroid drift) to verify embedding consistency before downstream estimation.
 
-\subsection{Inference}
-For each target paper $i$, let $e_i \in \mathbb{R}^d$ denote its embedding and let
-$P_i = [p_{i1}, \ldots, p_{im_i}] \in \mathbb{R}^{d \times m_i}$ collect the embeddings of
-its cited parents.
-We estimate inheritance weights $w_i \in \mathbb{R}^{m_i}$ by solving
+\subsection{Construction of citation DAG}
+From metadata, each directed edge $(j \rightarrow i)$ denotes that paper $p_i$ cites paper $p_j$. We enforce temporal validity by removing edges where publication year$(p_j)$ exceeds publication year$(p_i)$. The resulting graph is acyclic after temporal filtering and transitive inconsistencies are logged for audit.
+
+For each focal paper $p_i$, define its parent set $\mathcal{P}(i)$ as cited predecessors retained after filtering. Papers with fewer than $k_{\min}$ valid parents are kept in the corpus for descriptive analysis but excluded from inheritance regression to avoid unstable estimates.
+
+\subsection{Inheritance inference}
+For each eligible paper $p_i$, we model its embedding as
 \begin{equation}
-\min_{w_i}\; \frac{1}{2}\lVert e_i - P_i w_i \rVert_2^2
-+ \frac{\lambda_2}{2}\lVert w_i \rVert_2^2
+\mathbf{e}_i \approx \sum_{j \in \mathcal{P}(i)} w_{ij}\,\mathbf{e}_j + \mathbf{r}_i,
 \end{equation}
-subject to either (a) non-negativity $w_i \ge 0$, or (b) simplex constraints
-$w_i \ge 0$ and $\mathbf{1}^\top w_i = 1$.
-Optionally, a sparsity budget keeps only the top-$k$ weights after each projected
-update to improve interpretability.
+where $w_{ij} \ge 0$ and $\mathbf{r}_i$ is a residual contribution vector.
 
-The residual (novel contribution) vector is
+Weights are estimated with non-negative constrained least squares and simplex regularization:
 \begin{equation}
-r_i = e_i - P_i w_i,
+\min_{\mathbf{w}_i \ge 0}\; \left\|\mathbf{e}_i-\mathbf{E}_{\mathcal{P}(i)}\mathbf{w}_i\right\|_2^2 + \lambda\|\mathbf{w}_i\|_2^2
+\quad\text{s.t.}\quad
+\sum_{j \in \mathcal{P}(i)} w_{ij} \le 1,
 \end{equation}
-with reconstruction $\hat e_i = P_i w_i$.
+with $\mathbf{E}_{\mathcal{P}(i)}$ the parent-embedding matrix.
 
-We solve the constrained problem using projected gradient descent with deterministic
-initialization.
-At iteration $t$:
+The non-negativity constraint enforces interpretable additive inheritance. The simplex bound prevents over-attribution when parent embeddings are highly collinear. The unassigned mass,
 \begin{equation}
-\tilde w_i^{(t+1)} = w_i^{(t)} - \eta\left(P_i^\top(P_i w_i^{(t)} - e_i) + \lambda_2 w_i^{(t)}\right),
+c_i = 1 - \sum_{j \in \mathcal{P}(i)} w_{ij},
 \end{equation}
-followed by projection onto the chosen feasible set (non-negative orthant or simplex),
-and optional top-$k$ truncation.
-The process stops when $\lVert w_i^{(t+1)} - w_i^{(t)} \rVert_2 \le \varepsilon$ or a maximum
-iteration budget is reached.
+serves as a scalar \emph{contribution factor} (higher implies less explainability from cited parents). The vector residual
+\begin{equation}
+\mathbf{r}_i = \mathbf{e}_i-\sum_{j \in \mathcal{P}(i)} w_{ij}\mathbf{e}_j
+\end{equation}
+captures direction-specific novelty for downstream semantic inspection.
 
-For papers with no citations ($m_i=0$), we set $w_i=\varnothing$, $\hat e_i=0$, and
-$r_i=e_i$.
+\subsection{Handling non-orthogonal parents}
+Cited parents are typically correlated. To avoid unstable coefficient allocation, we combine three controls: (i) ridge regularization ($\lambda>0$), (ii) optional parent-pruning by semantic redundancy threshold, and (iii) bootstrap re-estimation over parent subsets to compute confidence intervals for $w_{ij}$. We report both point estimates and uncertainty to distinguish robust inheritance edges from ill-conditioned assignments.
+
+\subsection{Derived metrics and analyses}
+From fitted weights we compute:
+\begin{itemize}
+    \item \textbf{Edge inheritance strength} $w_{ij}$ for lineage tracing.
+    \item \textbf{Paper contribution magnitude} $c_i$ and $\|\mathbf{r}_i\|_2$.
+    \item \textbf{Lineage concentration} (entropy of $\mathbf{w}_i$), indicating whether inheritance is diffuse or dominated by a few parents.
+    \item \textbf{Cross-field transfer} by aggregating inheritance mass across discipline labels.
+\end{itemize}
+
+These quantities support both ranking-style comparisons and structural analyses of knowledge evolution in the citation DAG.

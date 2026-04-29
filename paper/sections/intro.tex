@@ -1,52 +1,29 @@
-\IEEEPARstart{S}{cience} is not a collection of isolated facts, but a living system of systems. It grows, mutates, and recombines across generations of research, much as life itself evolves. Human curiosity has always sought to chart this landscape: from celestial monuments inspiring astronomy, to the unforgiving seas that drove navigation and physics, to the hidden architectures of genomes and the brain. Each discovery reshapes the terrain, not only within its own field but across disciplines, as methods and ideas migrate in unexpected ways.
+\IEEEPARstart{S}{cience} advances through cumulative reuse and recombination of ideas, methods, and evidence. A new paper rarely appears in isolation; it inherits conceptual structure from prior work while introducing some degree of novelty. Despite this, common research-evaluation tools still rely primarily on relational proxies such as citation counts, journal impact measures, and author-level indices. These indicators are useful for large-scale monitoring, but they do not directly quantify \emph{what} content is inherited and \emph{what} content is newly contributed.
 
-Consider how imaging algorithms developed to resolve the silhouette of a black hole have been repurposed to stitch together scans of buried archaeological sites; how those reconstructions feed migration models, which in turn inform linguistic phylogenies. Or how knot theory and polymer physics illuminate the folding of DNA, leading to genome-engineering experiments that ripple into organoid models of the brain. Such examples illustrate the deep interconnectivity of scientific progress: a vast ecosystem in which ideas survive, recombine, and sometimes trigger revolutions.
+\subsection{Limits of current evaluation tools}
+Traditional bibliometrics conflate visibility with contribution. Citation volume is sensitive to field size, publication velocity, review-article effects, and strategic citation behavior \cite{Mingers2015,Callaham2002}. Author-level summaries such as the $h$-index can reward sustained productivity, yet they remain agnostic to semantic distinctiveness and to uneven contribution across papers \cite{Medoff2006,Wang2014}. Altmetrics broaden the signal surface, but they typically track attention dynamics rather than intellectual dependence \cite{Bornmann2014,Nath2021}. As a result, existing tools are limited when the central question is whether a publication materially extends knowledge.
 
-\subsection{Limits of current tools}
-Yet our dominant tools for measuring science remain strikingly superficial. Citation counts, impact factors, and the $h$-index reduce research impact to popularity signals \cite{Mingers2015,Callaham2002}. They reward salami-slicing practices and prestige bias \cite{Medoff2006,Wang2014}, distort incentives, and fail to capture the intellectual content of research itself. Altmetrics, proposed as a corrective, largely amplify the same social dynamics \cite{Bornmann2014,Nath2021}. [put a bit more of an agrument against these as this feels soft and just a mention]. These approaches also conflate two fundamentally different components:
+A content-aware evaluation requires separating two components:
 \begin{itemize}
-    \item \emph{Inherited knowledge} --- semantic content absorbed from cited works.
-    \item \emph{Novel contribution} --- the author’s original semantic addition.
+    \item \emph{Inherited knowledge}: semantic content attributable to cited predecessors.
+    \item \emph{Novel contribution}: semantic residual not explained by those predecessors.
 \end{itemize}
 
-This gap limits our ability to ask richer questions. Which works genuinely \emph{add} to the scientific record, rather than restating existing ideas? How does knowledge flow between disciplines? Can we detect paradigm shifts --- such as the rise of deep learning in AI or CRISPR in biology --- while they are happening, rather than only in hindsight \cite{Kuhn1962}?
+This separation enables richer analyses: identifying papers that primarily consolidate prior findings versus papers that introduce substantial conceptual additions; tracing pathways of knowledge transfer between fields; and monitoring shifts in research trajectories that may correspond to emerging paradigms \cite{Kuhn1962}.
 
-To address these limitations, I propose a \emph{genetic evolutionary framework for scientometrics}. Each paper is represented as a high-dimensional embedding in ``science-space'' using SciBERT \cite{Beltagy2019}. Conceptually, a paper is decomposed into the weighted combination of its cited works (its ``parents''), plus a residual vector representing the author’s novel input. This yields two interpretable measures:
+\subsection{Genetic perspective on scientific evolution}
+To operationalize this decomposition, we model publications in a shared semantic space using transformer-based scientific-text embeddings \cite{Beltagy2019}. For each focal paper, the embedding is approximated as a weighted combination of embeddings from its cited papers (its ``parents'') plus a residual term. The parent weights define edge-specific \emph{inheritance factors}, while the residual defines the paper-level \emph{contribution factor}. Conceptually, this induces a pseudo-genetic interpretation of science: papers have multiple parents, inherit unevenly, and express innovations as mutation-like residuals.
+
+When applied across a citation network, this formulation produces a directed acyclic structure with interpretable inheritance strengths on edges and contribution magnitude on nodes. The result is not merely another ranking score; it is a representation of how ideas are composed, propagated, and transformed.
+
+\subsection{Contributions}
+This paper makes four main contributions:
 \begin{itemize}
-    \item \textbf{Inheritance factor:} The proportion of a paper’s semantic embedding explained by each of its references.
-    \item \textbf{Contribution factor:} The residual vector, reflecting unique authorial input.
+    \item We formalize inheritance and contribution as a constrained semantic decomposition over citation neighborhoods.
+    \item We present an end-to-end pipeline for data acquisition, embedding, graph construction, and factor estimation on a medium-scale corpus.
+    \item We evaluate the framework against conventional bibliometric baselines (citation counts, PageRank-derived influence, and author-index proxies) and analyze where content-aware signals diverge from popularity signals.
+    \item We demonstrate qualitative and quantitative use cases, including lineage tracing, cross-disciplinary transfer analysis, and early detection of structurally novel publications.
 \end{itemize}
-
-These measures naturally invite a genetic analogy: science evolves as a hyper-sexual organisms, with multiple parents, variable inheritance strengths, and mutations that represent novel ideas. By extending this decomposition across citation networks, we obtain directed acyclic graphs (DAGs) that trace idea lineages, empower new analyses and visualizations, and reveal how knowledge accumulates and diverges.
-
-\subsection{Contributions of this paper}
-In this work, I aim to construct a model, an architecture, a TOOL to holistically study the science of science, not just be a metric, but to be a new entity for research.
-\begin{itemize}
-    \item Formalise the inheritance factor and contribution decomposition as reproducible, interpretable Scientometric metrics.
-    \item Implement a scalable pipeline and apply it to a corpus of $\sim$5,000 open-access papers drawn from Semantic Scholar and CORE.
-    \item Compare the framework against established baselines, including citation counts, PageRank, and the $h$-index.
-    \item Demonstrate how the framework reveals knowledge flows across disciplines, identifies influential contributions, and suggests potential early signals of paradigm shifts.
-\end{itemize}
-
-\subsection{Future potential}
-While the present paper focuses on formalisation and validation, the framework opens several avenues for future research. Extending to full-text embeddings could sharpen contribution estimates; cross-disciplinary benchmarking could illuminate how ideas migrate across the sciences; and integration with forecasting models may eventually support predictive tools for detecting emerging research fronts or paradigm shifts. In this way, a genetic scientometrics can help shift the evaluation of science away from superficial popularity, toward a more fundamental account of intellectual contribution.
 
 \subsection{Paper structure}
-The remainder of the paper is structured as follows: Section~\ref{sec:related} reviews related work in semantic scientometrics. Section~\ref{sec:method} defines the genetic evolutionary framework. Section~\ref{sec:experiments} reports results on a medium-sized corpus. Sections~\ref{sec:discussion}~\&~\ref{sec:lim_future} interprets the implications and limitations and outlines directions for future research.
-
-
-
-% \IEEEPARstart{S}{cientific} exploration is a rich, complex, and fruitful system that's dynamic nature is the reason for everything we know. All of nature is described by it. How humans interact, how they think, or how to make the sick better is all science. Every new technology innovation, ... 
-
-% Celestial monuments, sublime nature with its monstrous mountains and unforgiving seas, precisely engineering rockets delivering payloads into space before landing back down, geoactivity and exploding volcano, the stars and galaxies at unreachable corners of our universe.
-
-% It both impacts every aspect of reality as well as being impacted by every aspect of reality, from economic situations, natural disasters, policy changes and public perception, through to seemingly disconnected areas of science impacting each other in a grand, multicoupled, system of systems.
-
-% \subsection{Examples of the interconnected, systemic nature of science}
-% The imaging methods developed for black holes are reused to stitch together thin archaeological scans of buried sites\footnote{\href{https://openaccess.thecvf.com/content_cvpr_2016/papers/Bouman_Computational_Imaging_for_CVPR_2016_paper.pdf}{Computational Imaging for VLBI}, \href{https://arxiv.org/pdf/1407.2422}{Sparse modeling for radio interferometry}}. Those maps drive computer simulations of how past settlements formed and interacted\footnote{\href{https://www.mdpi.com/2072-4292/10/3/379}{GPR \& LiDAR data fusion at “Aquis Querquennis”}, \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC10054340/}{Remote sensing \& deep learning in archaeology (review)}}. Those simulations help reconstruct likely migration routes\footnote{\href{https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0325693}{Agent-based simulations of ancient migration pathways}, \href{https://www.sciencedirect.com/science/article/pii/S0047248418302136}{Least-cost pathway models of dispersal}}; and these reconstructions inform statistical models of language families and contact\footnote{\href{https://academic.oup.com/jole/article/6/2/119/6374521}{Bayesian phylogenetics of languages}, \href{https://www.nature.com/articles/s41599-022-01211-7}{Detecting contact in language trees}}.
-
-% Ideas from knot theory and polymer physics clarify how DNA can tangle and fold in cells\footnote{\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC5778459/}{DNA knots occur in chromatin}, \href{https://pmc.ncbi.nlm.nih.gov/articles/PMC9104579/}{Polymer physics of DNA folding (review)}}; those rules guide better 3D genome maps from lab data\footnote{\href{https://www.nature.com/articles/s41467-019-10005-6}{GEM-FISH: 3D genome modeling with polymer priors}}; scientists then reposition DNA loops with CRISPR to watch gene activity change\footnote{\href{https://www.nature.com/articles/ncomms15993}{CLOuD9 chromatin loop engineering}, \href{https://www.cell.com/cell/pdf/S0092-8674(18)31185-1.pdf}{CRISPR-GO genome positioning}}; these tests run in vascularized brain organoids that can show early symmetry breaking\footnote{\href{https://pmc.ncbi.nlm.nih.gov/articles/PMC9246368/}{Vascularized brain organoids}, \href{https://www.sciencedirect.com/science/article/pii/S2667242124000460}{Bioengineered symmetry breaking in organoids}}; and the results feed models of how the brain becomes left–right specialized\footnote{\href{https://journals.biologists.com/dev/article/139/18/3257/45198/Left-right-patterning-conserved-and-divergent}{Left–right patterning (review)}}.
-
-% For such a wide, dynamic, and impactive system - the analysis of which is incredibly immature, superficial, and gimicky. [GIVE JUSTIFICATION - LOOK AT PREVIOUS PAPER FOR INSPIRATION].
-
-% Because of this; I derived a semantic analysis; first of individual papers, and then expanded into the dynamic system. The way to show this was with a pseudogenome representing the semantic content of scientific papers, as well as constructing a directional acyclic graph (DAG) with a paper linked to the papers it cites as parents. These two concepts coming together allude to the genetic study of organisms - with hypersexual reproduction (multiparent reproduction); each with a different inheritance strength, and the mutations each paper experiences are predicted to stem from the author's contribution
+Section~\ref{sec:related} reviews relational and semantic scientometric methods. Section~\ref{sec:method} defines the pseudo-genetic model and estimation procedure. Section~\ref{sec:experiments} describes the dataset, baselines, and empirical results. Section~\ref{sec:discussion} interprets implications and practical considerations, and Section~\ref{sec:lim_future} outlines limitations and future directions.
