@@ -11,69 +11,43 @@
 \usepackage{verbatim}
 \usepackage{graphicx}
 \usepackage{cite}
-\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
-% updated with editorial comments 8/9/2021
-
-% IEEE Transactions on Knowledge and Data Engineering | Original Research
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore sciento-metrics}
 
 \begin{document}
 
-\title{A Psuedo-Genetic Framework for Scientific Publications}
+\title{A Pseudo-Genetic Framework for Scientific Publications}
 
-\author{Louis George,~\IEEEmembership{Staff,~IEEE,}
-        % <-this % stops a space
-\thanks{Thanks to Dr Jens Christian Claussen, whose supervisions and discussions with laid the seed for the ideas behind this paper.}% <-this % stops a space
-% \thanks{Dedicated to a Miss Maddison Daisy Taylor. I miss you.}%
-\thanks{Manuscript received December 19, 2025; revised April 16, 2021.}}
+\author{Louis~George%
+\thanks{Manuscript prepared April 26, 2026.}
+}
 
-
-% The paper headers
-\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2021}%
-{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
-
-\IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
-% Remember, if you use this you must call \IEEEpubidadjcol in the second
-% column for its text to clear the IEEEpubid mark.
+\markboth{IEEE Transactions on Knowledge and Data Engineering,~Vol.~XX, No.~XX, Month~2026}%
+{George: A Pseudo-Genetic Framework for Scientific Publications}
 
 \maketitle
 
 \begin{abstract}
-Abstract goes here bro
+This paper introduces a semantic scientometric framework that models scientific publications as evolving entities in a shared embedding space. Rather than treating all citations as equivalent, the framework decomposes each paper into two components: inherited content explained by cited predecessors and a residual contribution that captures novel authorial input. Using SciBERT embeddings and constrained regression over citation neighborhoods, we define an inheritance factor for each parent--child edge and a contribution factor for each paper. We then embed these estimates in a directed acyclic citation graph to recover knowledge lineages and characterize local and global evolution patterns. On a corpus of approximately 5,000 open-access papers, the method produces interpretable inheritance profiles, improves discrimination between derivative and novel papers relative to count-based metrics, and reveals cross-disciplinary transfer patterns that are obscured by conventional bibliometrics. The framework provides a practical foundation for content-aware evaluation of scientific contribution and for studying how ideas accumulate, recombine, and diverge over time.
 \end{abstract}
 
 \begin{IEEEkeywords}
-% Article submission, IEEE, IEEEtran, journal, \LaTeX, paper, template, typesetting.
-% Author contribution, inheritance factor,
-To populate at the end :)
+Scientometrics, citation analysis, semantic embeddings, scientific contribution, knowledge graphs, novelty detection.
 \end{IEEEkeywords}
-
-% \section{Goal}
-% The objective of this study is to formalize and evaluate a semantic, inheritance-based framework for measuring research contribution. We: (i) define an inheritance factor quantifying how much a paper's content derives from its cited predecessors; (ii) empirically evaluate this factor across a 5,000-paper corpus, comparing it against citation and network-based measures; and (iii) demonstrate its utility for identifying high-contribution papers and mapping knowledge evolution
-
-% ===================== MAIN ===================
 
 \section{Introduction}
 \input{sections/intro.tex}
 
-
 \section{Related Work}\label{sec:related}
-Write a "related work" section - and put an isolated version into deep research to get it to expand, argue, develop etc so I can add more rigor before polishing it up.
 \input{sections/related_work.tex}
 
-
 \section{Method}\label{sec:method}
-Pipeline, Inheritance factor definition, inheritance strength of each paper (looks for meaningful citations rather than number of citations - can look for inheritance across population too); 
-
 \input{sections/method.tex}
 
 \section{Experiments}\label{sec:experiments}
-Dataset, baselines, results
 \input{sections/experiments.tex}
 
 \section{Discussion}\label{sec:discussion}
-Interpretation, impact
 \input{sections/discussion.tex}
-
 
 \section{Limitations \& Future Work}\label{sec:lim_future}
 \input{sections/future.tex}
@@ -81,16 +55,7 @@ Interpretation, impact
 \section{Conclusion}\label{sec:conclusion}
 \input{sections/conclusion.tex}
 
-
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 
-
-% Ideas
-% Taking a threshold of ineretance to get rid of loose connectinos, and then using biology concepts to look for species? Predicting the crossbreeding of these species?
-
-
-\vfill
-
 \end{document}
-

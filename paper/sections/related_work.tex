@@ -1,64 +1,22 @@
+Research on scientific-publication analysis can be grouped into relational bibliometrics, semantic modeling, and hybrid science-of-science methods. Our framework builds on all three while targeting a specific gap: estimating inherited versus novel semantic content at the paper level.
 
-[Is there any semantic analysis of science papers?]
-There are two types of analysis that can be done on scientific publications, semantic and relational.
+\subsection{Relational bibliometrics and citation-network analysis}
+Classical scientometrics treats citations as links in a graph and studies structure using count-based and network-based statistics. Citation totals, impact factor variants, and author-level indices provide simple, scalable proxies for influence, but they are coarse and field-sensitive. Network methods such as PageRank-style centrality, co-citation, bibliographic coupling, and community detection better capture structural position and diffusion pathways. Temporal extensions model growth, obsolescence, and burst dynamics across time slices.
 
-\subsection{Citation Analysis} % Relational Analysis?
-This is a study that finds patterns in different citation links to get insights such as mapping influence.\\*
-These come in the form of 1) Link-Structure Rankings, 2) Pattern-Based Similarity, 3) Community \& Role Structure, 4) Temporal \& Evolutionary Citation Analytics, 5) Field-Normalisation \& Comparability, 6) Author/Entity-Level Indices, and 7) Counting \& Data Hygiene. A brief dive into each of them before a reflection from a GFSP perspective is given.
+These methods are valuable for mapping influence, yet they generally assume that each citation edge has comparable semantic meaning. In practice, citations can indicate foundational dependence, contrast, perfunctory acknowledgment, or methodological reuse. Without content, relational metrics cannot reliably distinguish these roles.
 
-\subsubsection{Link-Structure Rankings}
-\subsubsection{Pattern-Based Similarity}
-\subsubsection{Community \& Role Structure}
-\subsubsection{Temporal \& Evolutionary Citation Analytics}
-\subsubsection{Field-Normalisation \& Comparability}
-\subsubsection{Author/Entity-Level Indices}
-\subsubsection{Counting \& Data Hygiene }
+\subsection{Semantic representations of scientific text}
+Semantic scientometrics introduces textual representations to recover meaning beyond graph topology. Early approaches relied on bag-of-words vectors and topic models; more recent work uses contextual embeddings from transformer models trained on scholarly corpora. Such representations support document similarity, clustering, trend analysis, entity linking, and literature retrieval.
 
+A related line studies citation-context semantics by analyzing the sentence or paragraph surrounding citation mentions. This improves understanding of citation intent and rhetorical function. However, most semantic approaches still focus on similarity or classification and do not explicitly decompose a paper into inherited versus novel components.
 
-\subsubsection{Reflection}
-These tend to miss semantic context, which is important as this holds the actual concepts, ideas, methods, and knowledge. They also hold no meaning or weightings in individual citations which induces a lot of noise that is only removed with large samples samples.
+\subsection{Hybrid text--graph approaches}
+Hybrid methods combine citation structure with text features through graph neural models, heterogeneous networks, or joint embedding objectives. These systems improve tasks such as recommendation, field classification, and influence prediction by leveraging both topology and content. They demonstrate that semantic and relational signals are complementary.
 
+Yet, even in hybrid settings, the output is often a latent score optimized for prediction tasks rather than an interpretable decomposition aligned with scientific contribution. This limits their use for transparent evaluation and policy-facing analysis.
 
-\subsection{Semantic Analysis}
-[Intro words to semantic analysis]
-This will explore: 1) Representation Foundations, 2) Semantic Similarity \& Mapping, 3) Concept \& Entity Normalisation, 4) Citation-Context Semantics, 5) Temporal \& Evolutionary Semantics, 6) Text-Graph Hybrids, and 7) Evaluation, Data, \& Hygiene.
+\subsection{Paradigm shifts and novelty detection}
+Work inspired by Kuhnian dynamics attempts to detect scientific revolutions through topic transitions, citation reconfiguration, and disruption indices. Novelty measures often rely on atypical combinations of references, semantic distance from prior work, or divergence from field norms. These methods offer useful indicators of change, but many are sensitive to parameterization and do not directly quantify what fraction of a paper is inherited from specific predecessors.
 
-\subsubsection{Representation Foundations}
-\subsubsection{Semantic Similarity \& Mapping}
-\subsubsection{Concept \& Entity Normalisation}
-\subsubsection{Citation-Context Semantics}
-\subsubsection{Temporal \& Evolutionary Semantics}
-\subsubsection{Text-Graph Hybrids}
-\subsubsection{Evaluation, Data, \& Hygiene}
-
-\subsection{Methodological \& Theoretical Analysis}
-
-
-\subsection{Traditional Metrics}
-Citations, h-index, impact factor.
-
-\textbf{Pros}: simple, widely used.
-
-\textbf{Cons}: popularity bias, prestige effects, salami-slicing.
-
-\subsection{Network-based Metrics}
-PageRank, influence measures.
-
-Better than counts, but still blind to semantic novelty.
-
-Altmetrics \& Social Indicators: Twitter, Mendeley, etc.
-
-Capture visibility, but amplify hype rather than intellectual content.
-
-\subsection{Semantic Scientometrics}
-Embeddings (topic models, SciBERT, SBERT, cosine similarity).
-
-Start of capturing meaning, but usually measure similarity not inheritance/novelty.
-
-\subsection{Paradigm Shift Detection}
-Kuhn’s theory, attempts to quantify scientific revolutions.
-
-Good framing, but not operationalised at semantic level.
-
-\subsection{Gap Statement}
-None of the above frameworks separates inherited vs novel contribution → motivation for your genetic evolutionary model.
+\subsection{Gap addressed by this study}
+Across these literatures, no widely adopted framework simultaneously provides: (i) edge-level inheritance strength among cited parents, (ii) node-level residual novelty for each paper, and (iii) integration of both signals into a lineage-oriented citation DAG. The pseudo-genetic framework proposed here is designed to fill that gap with an interpretable, reproducible pipeline grounded in modern scientific-text embeddings.

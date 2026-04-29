@@ -1,0 +1,33 @@
+\subsection{Experimental setup}
+We evaluate the framework on a corpus of approximately 5,000 open-access papers collected from Semantic Scholar and CORE, with metadata for title, abstract, references, year, and coarse field label. After identifier cleaning and temporal citation filtering, the retained citation graph contains a connected backbone suitable for lineage analysis.
+
+Embeddings are generated using SciBERT over title--abstract concatenations. For inheritance estimation, we use non-negative ridge-constrained regression with hyperparameters selected by validation on reconstruction error and stability under bootstrap resampling.
+
+\subsection{Baselines}
+We compare pseudo-genetic signals against three commonly used baselines:
+\begin{itemize}
+    \item \textbf{Citation count}: raw and year-normalized citation volume.
+    \item \textbf{Network influence}: PageRank on the citation graph.
+    \item \textbf{Author-level proxy}: publication-level assignment from author $h$-index statistics where available.
+\end{itemize}
+
+These baselines represent popularity, structural centrality, and author reputation respectively.
+
+\subsection{Evaluation criteria}
+Because no single ground truth exists for ``true contribution,'' we use a triangulated evaluation strategy:
+\begin{enumerate}
+    \item \textbf{Reconstruction fidelity}: mean squared error between observed and reconstructed embeddings.
+    \item \textbf{Stability}: variance of inheritance weights under bootstrap parent perturbations.
+    \item \textbf{Expert-face validity}: qualitative inspection of high- and low-contribution papers for plausibility.
+    \item \textbf{Divergence from popularity}: rank-correlation and disagreement analysis versus citation/PageRank baselines.
+\end{enumerate}
+
+\subsection{Results}
+The framework yields low reconstruction error across fields while preserving interpretability of parent weights. Inheritance profiles are typically sparse: a minority of cited parents accounts for most explainable mass, consistent with selective conceptual dependence rather than uniform borrowing.
+
+Compared with citation and PageRank rankings, contribution-factor rankings show moderate correlation but substantial reordering in the tails. Several highly cited survey-style papers receive high inheritance and lower residual contribution, while some moderately cited methodological papers show lower inherited mass and larger residuals. This pattern indicates that the framework captures a dimension distinct from visibility.
+
+Cross-field aggregation reveals identifiable transfer channels (e.g., methods inherited from machine learning into biomedical applications), with asymmetric flow magnitudes that are not obvious from citation counts alone. Bootstrap intervals indicate that strongest inheritance edges are generally stable, whereas weak edges are sensitive to parent-set perturbations and should be interpreted cautiously.
+
+\subsection{Ablation analysis}
+Removing non-negativity constraints increases nominal fit but produces negative coefficients that are difficult to interpret as inheritance. Removing simplex regularization increases coefficient inflation under collinear parents. These ablations support the constrained formulation as the best trade-off between fit quality and interpretability.
