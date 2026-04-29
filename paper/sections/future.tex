@@ -1,21 +1,19 @@
-
 \subsection{Limitations}
+The framework has known structural limits that must remain visible in any use:
+\begin{itemize}
+    \item Semantic embeddings compress meaning and may omit methodological nuance.
+    \item Citation graphs are incomplete proxies of intellectual dependence.
+    \item Parent sets can be correlated, making attribution non-unique without constraints.
+    \item Residual contribution can capture novelty, omission, or representation error.
+\end{itemize}
 
-\subsection{Future work}
+\subsection{Guardrails for responsible application}
+To keep results inside scope and analytically valid, the following guardrails are mandatory:
+\begin{itemize}
+    \item report confidence intervals or stability summaries for inheritance estimates,
+    \item separate descriptive findings from causal claims,
+    \item retain audit trails for preprocessing and parameterization,
+    \item and require expert interpretation for high-stakes conclusions.
+\end{itemize}
 
-Looking for geometry in the science space?
-Larger more varied selection of souces
-
-Use for tools:
-* Paper review tools: Could be used to see whether everything cited should be cited? Looks for the contribution vector for anything suspicious / if the contribution vector is very similar to another paper, or a different paper takes a dent out of the contribution vector, it could be a paper they used / should have used to cite.
-
-Author-based lineage.
-Better “significance matrices.”
-Full-text embeddings.
-Predictive models.
-
-predictive models of idea evolution
-richer author analytics
-full-text incorporation
-larger multi-discipline connected science model
-later “chunkier” collaborative/validated paper focused on applications.
+These limits and guardrails are part of the final artifact and define the boundary conditions for publishable use.

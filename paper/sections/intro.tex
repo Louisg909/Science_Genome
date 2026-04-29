@@ -1,29 +1,29 @@
-\IEEEPARstart{S}{cience} advances through cumulative reuse and recombination of ideas, methods, and evidence. A new paper rarely appears in isolation; it inherits conceptual structure from prior work while introducing some degree of novelty. Despite this, common research-evaluation tools still rely primarily on relational proxies such as citation counts, journal impact measures, and author-level indices. These indicators are useful for large-scale monitoring, but they do not directly quantify \emph{what} content is inherited and \emph{what} content is newly contributed.
+Science Genome is scoped as a research framework for studying the flow and evolution of scientific ideas. The project objective is not paper discovery or citation search; it is analysis of idea lineage, inheritance, emergence, divergence, convergence, and author or stream contribution within scientific knowledge systems.
 
-\subsection{Limits of current evaluation tools}
-Traditional bibliometrics conflate visibility with contribution. Citation volume is sensitive to field size, publication velocity, review-article effects, and strategic citation behavior \cite{Mingers2015,Callaham2002}. Author-level summaries such as the $h$-index can reward sustained productivity, yet they remain agnostic to semantic distinctiveness and to uneven contribution across papers \cite{Medoff2006,Wang2014}. Altmetrics broaden the signal surface, but they typically track attention dynamics rather than intellectual dependence \cite{Bornmann2014,Nath2021}. As a result, existing tools are limited when the central question is whether a publication materially extends knowledge.
+This artifact seals that scope by defining the framework in a form that can be read, evaluated, and applied without external project documents. It therefore serves as both publication-ready manuscript content and project-level completion record.
 
-A content-aware evaluation requires separating two components:
+\subsection{Scope commitments captured by this artifact}
+The framework specified here addresses the full in-scope objective set:
 \begin{itemize}
-    \item \emph{Inherited knowledge}: semantic content attributable to cited predecessors.
-    \item \emph{Novel contribution}: semantic residual not explained by those predecessors.
+    \item Representation of scientific artifacts and their relationships.
+    \item Joint semantic and lineage analysis.
+    \item Interpretable evidence for idea-flow hypotheses.
+    \item Comparative analysis across branches, domains, and streams.
+    \item Explicit verification and validation (V\&V).
+    \item Reproducible, auditable research outputs.
 \end{itemize}
 
-This separation enables richer analyses: identifying papers that primarily consolidate prior findings versus papers that introduce substantial conceptual additions; tracing pathways of knowledge transfer between fields; and monitoring shifts in research trajectories that may correspond to emerging paradigms \cite{Kuhn1962}.
+\subsection{Out-of-scope protections}
+To preserve scientific validity, this artifact explicitly excludes product expansion goals that are not required for core research questions. It does not claim causal proof of influence, does not replace expert interpretation, and does not bind the framework to any single implementation family.
 
-\subsection{Genetic perspective on scientific evolution}
-To operationalize this decomposition, we model publications in a shared semantic space using transformer-based scientific-text embeddings \cite{Beltagy2019}. For each focal paper, the embedding is approximated as a weighted combination of embeddings from its cited papers (its ``parents'') plus a residual term. The parent weights define edge-specific \emph{inheritance factors}, while the residual defines the paper-level \emph{contribution factor}. Conceptually, this induces a pseudo-genetic interpretation of science: papers have multiple parents, inherit unevenly, and express innovations as mutation-like residuals.
-
-When applied across a citation network, this formulation produces a directed acyclic structure with interpretable inheritance strengths on edges and contribution magnitude on nodes. The result is not merely another ranking score; it is a representation of how ideas are composed, propagated, and transformed.
-
-\subsection{Contributions}
-This paper makes four main contributions:
+\subsection{Role of this paper in project completion}
+This paper is the final standalone artifact for the defined scope. It codifies:
 \begin{itemize}
-    \item We formalize inheritance and contribution as a constrained semantic decomposition over citation neighborhoods.
-    \item We present an end-to-end pipeline for data acquisition, embedding, graph construction, and factor estimation on a medium-scale corpus.
-    \item We evaluate the framework against conventional bibliometric baselines (citation counts, PageRank-derived influence, and author-index proxies) and analyze where content-aware signals diverge from popularity signals.
-    \item We demonstrate qualitative and quantitative use cases, including lineage tracing, cross-disciplinary transfer analysis, and early detection of structurally novel publications.
+    \item the conceptual model,
+    \item the formal estimation problem,
+    \item the interpretation policy,
+    \item the V\&V protocol,
+    \item and the limitations required for responsible use.
 \end{itemize}
 
-\subsection{Paper structure}
-Section~\ref{sec:related} reviews relational and semantic scientometric methods. Section~\ref{sec:method} defines the pseudo-genetic model and estimation procedure. Section~\ref{sec:experiments} describes the dataset, baselines, and empirical results. Section~\ref{sec:discussion} interprets implications and practical considerations, and Section~\ref{sec:lim_future} outlines limitations and future directions.
+Any compliant implementation can be evaluated against these definitions. In this way, the artifact completes the project scope at the research-framework level while remaining implementation-agnostic.
