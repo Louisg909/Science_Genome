@@ -4,6 +4,35 @@
 
 
 \subsection{Inference}
-By projecting a paper's embedding on each of its cited work's embeddings, you gain an inheritance factor in that direction.
+For each target paper $i$, let $e_i \in \mathbb{R}^d$ denote its embedding and let
+$P_i = [p_{i1}, \ldots, p_{im_i}] \in \mathbb{R}^{d \times m_i}$ collect the embeddings of
+its cited parents.
+We estimate inheritance weights $w_i \in \mathbb{R}^{m_i}$ by solving
+\begin{equation}
+\min_{w_i}\; \frac{1}{2}\lVert e_i - P_i w_i \rVert_2^2
++ \frac{\lambda_2}{2}\lVert w_i \rVert_2^2
+\end{equation}
+subject to either (a) non-negativity $w_i \ge 0$, or (b) simplex constraints
+$w_i \ge 0$ and $\mathbf{1}^\top w_i = 1$.
+Optionally, a sparsity budget keeps only the top-$k$ weights after each projected
+update to improve interpretability.
 
-\emph{NOTE: The cited articles are not necessarily orthogonal - in fact they most certainly will be far from this. This will impact the interpretation and will need a bit of mathematical riggure to fix - through some form of normalisation? Or "snapping" the papers onto an orthogonal basis? Take each paper, find what is different about each of them and what is shared - any shared inheritance can be distributed evenly, and inheritance of uniqueness will be attributed directly (obviously) ? The residual will still be the paper's contribution}
+The residual (novel contribution) vector is
+\begin{equation}
+r_i = e_i - P_i w_i,
+\end{equation}
+with reconstruction $\hat e_i = P_i w_i$.
+
+We solve the constrained problem using projected gradient descent with deterministic
+initialization.
+At iteration $t$:
+\begin{equation}
+\tilde w_i^{(t+1)} = w_i^{(t)} - \eta\left(P_i^\top(P_i w_i^{(t)} - e_i) + \lambda_2 w_i^{(t)}\right),
+\end{equation}
+followed by projection onto the chosen feasible set (non-negative orthant or simplex),
+and optional top-$k$ truncation.
+The process stops when $\lVert w_i^{(t+1)} - w_i^{(t)} \rVert_2 \le \varepsilon$ or a maximum
+iteration budget is reached.
+
+For papers with no citations ($m_i=0$), we set $w_i=\varnothing$, $\hat e_i=0$, and
+$r_i=e_i$.
