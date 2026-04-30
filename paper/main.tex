@@ -1,57 +1,30 @@
-% \documentclass[lettersize,journal]{IEEEtran} ieee packages and stuff should be re-instated in final export. Working copy is kept lean. Bellow is things that are for the working copy and not final export:
-
 \documentclass[11pt,a4paper]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{multicol}
-% end temp packages
-
-
 \usepackage{amsmath,amsfonts,amssymb}
-% \usepackage{algorithmic} % ieee tooling
-% \usepackage{algorithm} % ieee tooling
 \usepackage{array}
 \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
 \usepackage{textcomp}
-% \usepackage{stfloats} % ieee fonts
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 \usepackage{verbatim}
 \usepackage{graphicx}
-% \usepackage{cite} % ieee tooling
-% \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
-% updated with editorial comments 8/9/2021
-
-% IEEE Transactions on Knowledge and Data Engineering | Original Research
 
 \begin{document}
 
 \title{A Pseudo-Genetic Framework for Scientific Publications}
 
 \author{Louis~George%
-\thanks{Manuscript prepared April 26, 2026.}
+\thanks{Manuscript prepared as the final standalone artifact of the Science Genome research project.}
 }
-
-\markboth{IEEE Transactions on Knowledge and Data Engineering,~Vol.~XX, No.~XX, Month~2026}%
-{George: A Pseudo-Genetic Framework for Scientific Publications}
 
 \maketitle
 
 \begin{abstract}
-This paper introduces a semantic scientometric framework that models scientific publications as evolving entities in a shared embedding space. Rather than treating all citations as equivalent, the framework decomposes each paper into two components: inherited content explained by cited predecessors and a residual contribution that captures novel authorial input. Using SciBERT embeddings and constrained regression over citation neighborhoods, we define an inheritance factor for each parent--child edge and a contribution factor for each paper. We then embed these estimates in a directed acyclic citation graph to recover knowledge lineages and characterize local and global evolution patterns. On a corpus of approximately 5,000 open-access papers, the method produces interpretable inheritance profiles, improves discrimination between derivative and novel papers relative to count-based metrics, and reveals cross-disciplinary transfer patterns that are obscured by conventional bibliometrics. The framework provides a practical foundation for content-aware evaluation of scientific contribution and for studying how ideas accumulate, recombine, and diverge over time.
+This paper presents a standalone framework for analyzing how scientific ideas are inherited, transformed, and recombined across publication lineages. Publications are represented in a shared semantic space and decomposed into inherited content explained by cited predecessors plus residual contribution not explained by those predecessors. The framework combines constrained inheritance inference on a time-respecting citation graph with explicit verification and validation procedures, enabling interpretable edge-level and node-level analysis of knowledge flow. The result is a publishable, implementation-agnostic specification for content-aware scientometric analysis that supports lineage tracing, novelty assessment, and reproducible research interpretation.
 \end{abstract}
 
-% \begin{IEEEkeywords}
-% Scientometrics, citation analysis, semantic embeddings, scientific contribution, knowledge graphs, novelty detection.
-% \end{IEEEkeywords}
-
-% \section{Goal}
-% The objective of this study is to formalize and evaluate a semantic, inheritance-based framework for measuring research contribution. We: (i) define an inheritance factor quantifying how much a paper's content derives from its cited predecessors; (ii) empirically evaluate this factor across a 5,000-paper corpus, comparing it against citation and network-based measures; and (iii) demonstrate its utility for identifying high-contribution papers and mapping knowledge evolution
-
-% ===================== MAIN ===================
-
-% only for temp
 \begin{multicols}{2}
-% end temp
 
 \section{Introduction}
 \input{sections/intro.tex}
@@ -62,23 +35,21 @@ This paper introduces a semantic scientometric framework that models scientific 
 \section{Method}\label{sec:method}
 \input{sections/method.tex}
 
-\section{Experiments}\label{sec:experiments}
+\section{Evaluation Protocol}\label{sec:experiments}
 \input{sections/experiments.tex}
 
 \section{Discussion}\label{sec:discussion}
 \input{sections/discussion.tex}
 
-\section{Limitations \& Future Work}\label{sec:lim_future}
+\section{Limitations}\label{sec:lim_future}
 \input{sections/future.tex}
 
 \section{Conclusion}\label{sec:conclusion}
 \input{sections/conclusion.tex}
 
-% temp only
 \end{multicols}
-% end temp
 
-\bibliographystyle{plain} % \bibliographystyle{IEEEtran} ieee style
+\bibliographystyle{plain}
 \bibliography{references}
 
 \end{document}
