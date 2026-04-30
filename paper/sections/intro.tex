@@ -1,29 +1,24 @@
-\IEEEPARstart{S}{cience} advances through cumulative reuse and recombination of ideas, methods, and evidence. A new paper rarely appears in isolation; it inherits conceptual structure from prior work while introducing some degree of novelty. Despite this, common research-evaluation tools still rely primarily on relational proxies such as citation counts, journal impact measures, and author-level indices. These indicators are useful for large-scale monitoring, but they do not directly quantify \emph{what} content is inherited and \emph{what} content is newly contributed.
+Scientific progress emerges through reuse, adaptation, and recombination of prior ideas. Citation networks record part of this process, but citation counts and centrality metrics alone do not reveal how much intellectual content is inherited from predecessors versus newly contributed by a paper.
 
-\subsection{Limits of current evaluation tools}
-Traditional bibliometrics conflate visibility with contribution. Citation volume is sensitive to field size, publication velocity, review-article effects, and strategic citation behavior \cite{Mingers2015,Callaham2002}. Author-level summaries such as the $h$-index can reward sustained productivity, yet they remain agnostic to semantic distinctiveness and to uneven contribution across papers \cite{Medoff2006,Wang2014}. Altmetrics broaden the signal surface, but they typically track attention dynamics rather than intellectual dependence \cite{Bornmann2014,Nath2021}. As a result, existing tools are limited when the central question is whether a publication materially extends knowledge.
+This work formalizes a content-aware framework for that distinction. Each paper is represented in a shared semantic space and approximated as a constrained mixture of cited-parent embeddings plus a residual term. The mixture weights encode lineage-specific inheritance, while the residual captures contribution not attributable to cited predecessors.
 
-A content-aware evaluation requires separating two components:
+\subsection{Problem focus}
+The framework is designed to support analysis of:
 \begin{itemize}
-    \item \emph{Inherited knowledge}: semantic content attributable to cited predecessors.
-    \item \emph{Novel contribution}: semantic residual not explained by those predecessors.
+    \item idea lineage and parent dependence,
+    \item persistence and transformation of semantic traits,
+    \item divergence and convergence across branches,
+    \item and cross-domain transfer of methods or concepts.
 \end{itemize}
 
-This separation enables richer analyses: identifying papers that primarily consolidate prior findings versus papers that introduce substantial conceptual additions; tracing pathways of knowledge transfer between fields; and monitoring shifts in research trajectories that may correspond to emerging paradigms \cite{Kuhn1962}.
+\subsection{Research stance}
+The objective is analytical interpretation, not causal proof of influence. Inheritance and contribution factors are evidential signals that require uncertainty-aware reading and expert contextualization.
 
-\subsection{Genetic perspective on scientific evolution}
-To operationalize this decomposition, we model publications in a shared semantic space using transformer-based scientific-text embeddings \cite{Beltagy2019}. For each focal paper, the embedding is approximated as a weighted combination of embeddings from its cited papers (its ``parents'') plus a residual term. The parent weights define edge-specific \emph{inheritance factors}, while the residual defines the paper-level \emph{contribution factor}. Conceptually, this induces a pseudo-genetic interpretation of science: papers have multiple parents, inherit unevenly, and express innovations as mutation-like residuals.
-
-When applied across a citation network, this formulation produces a directed acyclic structure with interpretable inheritance strengths on edges and contribution magnitude on nodes. The result is not merely another ranking score; it is a representation of how ideas are composed, propagated, and transformed.
-
-\subsection{Contributions}
-This paper makes four main contributions:
+\subsection{Contributions of this paper}
+This paper delivers a final, standalone specification by providing:
 \begin{itemize}
-    \item We formalize inheritance and contribution as a constrained semantic decomposition over citation neighborhoods.
-    \item We present an end-to-end pipeline for data acquisition, embedding, graph construction, and factor estimation on a medium-scale corpus.
-    \item We evaluate the framework against conventional bibliometric baselines (citation counts, PageRank-derived influence, and author-index proxies) and analyze where content-aware signals diverge from popularity signals.
-    \item We demonstrate qualitative and quantitative use cases, including lineage tracing, cross-disciplinary transfer analysis, and early detection of structurally novel publications.
+    \item a formal decomposition model for inherited and residual semantic content,
+    \item an estimation procedure with interpretability-preserving constraints,
+    \item a verification and validation protocol for trustworthy use,
+    \item and interpretation guardrails for responsible scientometric analysis.
 \end{itemize}
-
-\subsection{Paper structure}
-Section~\ref{sec:related} reviews relational and semantic scientometric methods. Section~\ref{sec:method} defines the pseudo-genetic model and estimation procedure. Section~\ref{sec:experiments} describes the dataset, baselines, and empirical results. Section~\ref{sec:discussion} interprets implications and practical considerations, and Section~\ref{sec:lim_future} outlines limitations and future directions.
