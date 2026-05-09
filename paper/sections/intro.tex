@@ -1,10 +1,10 @@
-Scientific progress emerges through reuse, adaptation, and recombination of prior ideas. Citation networks record part of this process, but citation counts and centrality metrics alone do not reveal how much intellectual content is inherited from predecessors versus newly contributed by a paper.
+Scientific progress emerges through reuse, adaptation, and recombination of prior ideas. Citation networks record part of this process, but citation counts and centrality metrics alone do not reveal how intellectual content flows, or how contributions from  predecessors impact those in newer papers.
 
-This work formalizes a content-aware framework for that distinction. Each paper is represented in a shared semantic space and approximated as a constrained mixture of cited-parent embeddings plus a residual term. The mixture weights encode lineage-specific inheritance, while the residual captures contribution not attributable to cited predecessors.
+This work formalises a content-aware framework for that distinction. Each paper is represented in a shared semantic space and approximated as a constrained mixture of cited-parent embeddings plus a residual term. The mixture weights encode lineage-specific inheritance, while the residual captures contribution not attributable to cited predecessors.
 
 \subsection{Problem focus}
 The framework is designed to support analysis of:
-\begin{itemize}
+\begin{itemize} % ensure this list aligns with what you want it for. It should perfectly show what it is that this framework is designed for at the fundamental layer and make it clean. A list of a few things that include everything that it is designed for, leave nothing out, and each item is at the same level of focus (not one general thing that covers a lot, and one very granular item)
     \item idea lineage and parent dependence,
     \item persistence and transformation of semantic traits,
     \item divergence and convergence across branches,
@@ -18,7 +18,7 @@ The objective is analytical interpretation, not causal proof of influence. Inher
 This paper delivers a final, standalone specification by providing:
 \begin{itemize}
     \item a formal decomposition model for inherited and residual semantic content,
-    \item an estimation procedure with interpretability-preserving constraints,
-    \item a verification and validation protocol for trustworthy use,
-    \item and interpretation guardrails for responsible scientometric analysis.
+    \item an estimation procedure with interpretability-preserving constraints, % check these - should be everything I am wanting htis paper to show. It is in the introduction so should be giving a hint of what is to come in the paper
+    \item verification and validation of the model.
+    % \item and interpretation guardrails for responsible scientometric analysis.
 \end{itemize}

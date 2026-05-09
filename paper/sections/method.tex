@@ -1,32 +1,32 @@
-\subsection{Overview}
-The method has four stages: (1) construct a semantically embedded paper corpus, (2) build a time-respecting citation DAG, (3) estimate inheritance weights from cited parents to each focal paper, and (4) derive contribution and lineage statistics from the fitted decomposition.
+% \subsection{Overview} - I feel I don't need a header here, this is just the opening text of the method that pre-empts the breakdown.
+The method has four stages: (1) construct a semantically embedded paper corpus, (2) build a citation-based DAG, (3) estimate inheritance weights from cited parents to each focal paper, and (4) derive contribution and lineage statistics from the fitted decomposition.
 
 \subsection{Construction of science space}
-Let each paper $p_i$ be represented by title and abstract text. We encode this text using SciBERT to obtain an embedding $\mathbf{e}_i \in \mathbb{R}^d$. Embeddings are $\ell_2$-normalized to stabilize cosine geometry and reduce scale effects between documents of different length.
+Let each paper $p_i$ be represented by title and abstract text. We encode this text using an appropriate transformer (e.g.  SciBERT) to obtain an embedding $\mathbf{e}_i \in \mathbb{R}^d$. Embeddings are $\ell_2$-normalized to stabilize cosine geometry and reduce scale effects between documents of different length (large documents having large magnitudes and seen as "more simular").
 
-To improve robustness, we apply light preprocessing (Unicode normalization, citation-marker removal, and deduplication by identifier). We then compute corpus-level diagnostics (norm distribution, nearest-neighbor density, and year-stratified centroid drift) to verify embedding consistency before downstream estimation.
+To improve robustness, we apply light preprocessing (Unicode normalization, citation-marker removal, and deduplication by identifier). We then compute corpus-level diagnostics (norm distribution, nearest-neighbor density, and year-stratified centroid drift) to verify embedding consistency before downstream estimation. % what is meant by this bit?? I haven't done this? Is it worth me doing? If so, why? What is the intent? And ontop of that, is it really something I need to include in the report? Is it really needed?
 
 \subsection{Construction of citation DAG}
-From metadata, each directed edge $(j \rightarrow i)$ denotes that paper $p_i$ cites paper $p_j$. We enforce temporal validity by removing edges where publication year$(p_j)$ exceeds publication year$(p_i)$. The resulting graph is acyclic after temporal filtering and transitive inconsistencies are logged for audit.
+From metadata, each directed edge $(j \rightarrow i)$ denotes that paper $p_i$ cites paper $p_j$. We resolve any cylic instances by removing edges where publication year$(p_j)$ exceeds publication year$(p_i)$. % better word for "cylic instances" - cylic problems or something idk
 
-For each focal paper $p_i$, define its parent set $\mathcal{P}(i)$ as cited predecessors retained after filtering. Papers with fewer than $k_{\min}$ valid parents are kept in the corpus for descriptive analysis but excluded from inheritance regression to avoid unstable estimates.
+For each focal paper $p_i$, define its parent set $\mathcal{P}(i)$ as cited predecessors retained after filtering. Papers with fewer than $k_{\min}$ valid parents are kept in the corpus for descriptive analysis but excluded from inheritance regression to avoid unstable estimates. % why the last statement? Why would they be unstable? Why couldn't they be used. Do we need to even note k_min ? 
 
 \subsection{Inheritance inference}
 For each eligible paper $p_i$, we model its embedding as
 \begin{equation}
 \mathbf{e}_i \approx \sum_{j \in \mathcal{P}(i)} w_{ij}\,\mathbf{e}_j + \mathbf{r}_i,
 \end{equation}
-where $w_{ij} \ge 0$ and $\mathbf{r}_i$ is a residual contribution vector.
+where $0 \le w_{ij} \le 1$ and $\mathbf{r}_i$ is a residual contribution vector.
 
 Weights are estimated with non-negative constrained least squares and simplex regularization:
 \begin{equation}
 \min_{\mathbf{w}_i \ge 0}\; \left\|\mathbf{e}_i-\mathbf{E}_{\mathcal{P}(i)}\mathbf{w}_i\right\|_2^2 + \lambda\|\mathbf{w}_i\|_2^2
 \quad\text{s.t.}\quad
 \sum_{j \in \mathcal{P}(i)} w_{ij} \le 1,
-\end{equation}
+\end{equation} % what does all of this mean??
 with $\mathbf{E}_{\mathcal{P}(i)}$ the parent-embedding matrix.
 
-The non-negativity constraint enforces interpretable additive inheritance. The simplex bound prevents over-attribution when parent embeddings are highly collinear. The unassigned mass,
+The non-negativity constraint enforces interpretable additive inheritance. The simplex bound prevents over-attribution when parent embeddings are highly collinear. The unassigned mass, % what is simplex? what is the simplex bound?
 \begin{equation}
 c_i = 1 - \sum_{j \in \mathcal{P}(i)} w_{ij},
 \end{equation}
@@ -36,14 +36,14 @@ serves as a scalar \emph{contribution factor} (higher implies less explainabilit
 \end{equation}
 captures direction-specific novelty for downstream semantic inspection.
 
-\subsection{Handling non-orthogonal parents}
+\subsection{Handling non-orthogonal parents} % this whole section needs exploring - understanding, verifying, and explaining in a way that I understand and that is applicable to this problem. After researching, it may likely be something I will rewrite / redesign the previous sub section with in mind.
 Cited parents are typically correlated. To avoid unstable coefficient allocation, we combine three controls: (i) ridge regularization ($\lambda>0$), (ii) optional parent-pruning by semantic redundancy threshold, and (iii) bootstrap re-estimation over parent subsets to compute confidence intervals for $w_{ij}$. We report both point estimates and uncertainty to distinguish robust inheritance edges from ill-conditioned assignments.
 
 \subsection{Derived metrics and analyses}
 From fitted weights we compute:
 \begin{itemize}
     \item \textbf{Edge inheritance strength} $w_{ij}$ for lineage tracing.
-    \item \textbf{Paper contribution magnitude} $c_i$ and $\|\mathbf{r}_i\|_2$.
+    \item \textbf{Paper contribution and contribution  magnitude} $\mathbf{r}_i$, and  $c_i$ or  $\|\mathbf{r}_i\|_2$. % Have some thinking time of what c_i and ||r_i||_2  individually represent. 
     \item \textbf{Lineage concentration} (entropy of $\mathbf{w}_i$), indicating whether inheritance is diffuse or dominated by a few parents.
     \item \textbf{Cross-field transfer} by aggregating inheritance mass across discipline labels.
 \end{itemize}
