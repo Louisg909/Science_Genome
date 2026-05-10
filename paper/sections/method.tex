@@ -1,7 +1,7 @@
 The method has four stages: (1) construct a semantically embedded paper corpus, (2) build a citation-based DAG, (3) estimate inheritance weights from cited parents to each focal paper, and (4) derive contribution and lineage statistics from the fitted decomposition.
 
 \subsection{Construction of science space}
-Let each paper $p_i$ be represented by title and abstract text. We encode this text using an appropriate transformer (e.g.  SciBERT) to obtain an embedding $\mathbf{e}_i \in \mathbb{R}^d$. Embeddings are $\ell_2$-normalized to stabilize cosine geometry and reduce scale effects between documents of different length (large documents having large magnitudes and seen as "more simular").
+Let each paper $p_i$ be represented by title and abstract text. We encode this text using an appropriate transformer (e.g.  SciBERT) to obtain an embedding $\mathbf{e}_i \in \mathbb{R}^d$. Embeddings are $\ell_2$-normalized to stabilize cosine geometry and reduce scale effects between documents of different length (large documents having large magnitudes and seen as "more simular" - this also means $\|p_i\|=1$).
 
 To improve robustness, we apply light preprocessing (Unicode normalization, citation-marker removal, and deduplication by identifier). We then compute corpus-level diagnostics (norm distribution, nearest-neighbor density, and year-stratified centroid drift) to verify embedding consistency before downstream estimation. % what is meant by this bit?? I haven't done this? Is it worth me doing? If so, why? What is the intent? And ontop of that, is it really something I need to include in the report? Is it really needed?
 
@@ -9,29 +9,65 @@ To improve robustness, we apply light preprocessing (Unicode normalization, cita
 For each citation ($p_j\in \mathcal{P}(i)$) of paper $p_i$ can be connected with a directed edge ($j\to i$) to build up a \textit{Directed Acylic Graph} (DAG) with any circular citations are resolved by removing edges where publication year of $p_i$ exceeds that of $p_j$.
 
 \subsection{Inheritance inference}
-For each eligible paper $p_i$, we model its embedding as
-\begin{equation}
-\mathbf{e}_i \approx \sum_{j \in \mathcal{P}(i)} w_{ij}\,\mathbf{e}_j + \mathbf{r}_i,
-\end{equation}
-where $0 \le w_{ij} \le 1$ and $\mathbf{r}_i$ is a residual contribution vector.
 
-Weights are estimated with non-negative constrained least squares and simplex regularization:
-\begin{equation}
-\min_{\mathbf{w}_i \ge 0}\; \left\|\mathbf{e}_i-\mathbf{E}_{\mathcal{P}(i)}\mathbf{w}_i\right\|_2^2 + \lambda\|\mathbf{w}_i\|_2^2
-\quad\text{s.t.}\quad
-\sum_{j \in \mathcal{P}(i)} w_{ij} \le 1,
-\end{equation} % what does all of this mean??
-with $\mathbf{E}_{\mathcal{P}(i)}$ the parent-embedding matrix.
+We seek to decompose the semantic composition of $p_i$ into:
+\begin{enumerate}
+    \item the semantic contribution of each cited parent $j$ on $i$ ($\phi_{ij}$);
+    \item the magnitude of paper $i$'s novel semantic content ($\|r_i\|$);
+    \item the semantic direction of that novel content ($\bar{r}_i$).
+\end{enumerate}
+In a way that is rigorous and grounded in vector reconstruction and projection methods.
 
-The non-negativity constraint enforces interpretable additive inheritance. The simplex bound prevents over-attribution when parent embeddings are highly collinear. The unassigned mass, % what is simplex? what is the simplex bound?
+Paper $i$ is decomposed into a reconstructed inherited component and residual component:
+\[p_i = \sum_{p_j \in \mathcal{P} (i)} w_{ij}^* p_j + r_i\]
+where $w_j^*$ are constrained non-negitive reconstruction coefficients and $r_i$ is the residual semnatic component.
+
+The coefficients $w_{ij}^*$ are obtained via constrained least-squares reconstruction:
+\[w_i^* = \arg \min_{w_{ij}\ge 0} \left \| p_i - \sum_{p_j\in \mathcal{P}(i)}w_{ij} p_j\right \|^2 \]
+
+subject to:
+\[\sum_{p_j\in \mathcal{P}(i)}  w_{ij} \le 1\]
+
+
+\subsubsection*{Novel Semantic Contribution}
+The semantic direction of th enovel contribution is represnted by the normalised residual direction $\bar{r}_i$, with the magnitude normalised to get the contribution magnitude:
 \begin{equation}
-c_i = 1 - \sum_{j \in \mathcal{P}(i)} w_{ij},
+    \nu_i^* = \frac{\|r_i\|}{\sum_{p_j \in \mathcal{P}(i)} w_{ij}^* + \|r_i\|}
 \end{equation}
-serves as a scalar \emph{contribution factor} (higher implies less explainability from cited parents). The vector residual
+
+\subsubsection*{Parent Contribution}
+
+The raw reconstruction coefficients are not necessarily stable indicators of the contribution of paper \(j\) to paper \(i\), as semantically similar papers may be interchangeable within the reconstruction. Parent contribution is therefore treated as an attribution problem rather than a purely geometric decomposition problem.
+
+Parent contribution scores are computed using Shapley-value attribution, which measures the average marginal reconstruction contribution of each parent paper across all parent subsets.
+
+In Shapley attribution, the value function defines the total utility produced by a subset of contributors. In this work, utility is defined as semantic reconstruction quality.
+
+The Shapley attribution of parent paper \(j\) to target paper \(i\) is therefore given by:
+
 \begin{equation}
-\mathbf{r}_i = \mathbf{e}_i-\sum_{j \in \mathcal{P}(i)} w_{ij}\mathbf{e}_j
+\phi_{ij}
+=
+\sum_{S\subseteq \mathcal{P}(i)\setminus\{j\}}&
+\frac{|S|!(|\mathcal{P}(i)|-|S|-1)!}
+{|\mathcal{P}(i)|!}
+    \Delta_i(j,S)
 \end{equation}
-captures direction-specific novelty for downstream semantic inspection.
+where:
+\begin{equation}
+    \Delta_i(j,S)=V_i(S\cup \{j\})-V_i(S)
+\end{equation}
+and \(V_i(S)\) measures how well subset \(S\) reconstructs target paper \(i\), and is defined as:
+\begin{equation}
+V_i(S)
+=
+1-
+\min_{\{w_{ij}\ge0\}}
+\left\|
+p_i-
+\sum_{p_j\in S} w_{ij}p_j
+\right\|^2
+\end{equation}
 
 \subsection{Handling non-orthogonal parents} % this whole section needs exploring - understanding, verifying, and explaining in a way that I understand and that is applicable to this problem. After researching, it may likely be something I will rewrite / redesign the previous sub section with in mind.
 Cited parents are typically correlated. To avoid unstable coefficient allocation, we combine three controls: (i) ridge regularization ($\lambda>0$), (ii) optional parent-pruning by semantic redundancy threshold, and (iii) bootstrap re-estimation over parent subsets to compute confidence intervals for $w_{ij}$. We report both point estimates and uncertainty to distinguish robust inheritance edges from ill-conditioned assignments.

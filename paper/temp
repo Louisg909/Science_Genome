@@ -1,0 +1,9 @@
+
+# 2
+This seems important for the code base, but not the paper. For the paper, it is just unnecessary noise that doesn't contribute directly to the intent of the paper. The paper is just around the core research idea - not a how-to guide to writing software.
+Please remove it from the paper, and ensure it is correctly implemented into the code base.
+
+
+
+
+
