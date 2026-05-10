@@ -1,4 +1,3 @@
-% \subsection{Overview} - I feel I don't need a header here, this is just the opening text of the method that pre-empts the breakdown.
 The method has four stages: (1) construct a semantically embedded paper corpus, (2) build a citation-based DAG, (3) estimate inheritance weights from cited parents to each focal paper, and (4) derive contribution and lineage statistics from the fitted decomposition.
 
 \subsection{Construction of science space}
@@ -7,9 +6,7 @@ Let each paper $p_i$ be represented by title and abstract text. We encode this t
 To improve robustness, we apply light preprocessing (Unicode normalization, citation-marker removal, and deduplication by identifier). We then compute corpus-level diagnostics (norm distribution, nearest-neighbor density, and year-stratified centroid drift) to verify embedding consistency before downstream estimation. % what is meant by this bit?? I haven't done this? Is it worth me doing? If so, why? What is the intent? And ontop of that, is it really something I need to include in the report? Is it really needed?
 
 \subsection{Construction of citation DAG}
-From metadata, each directed edge $(j \rightarrow i)$ denotes that paper $p_i$ cites paper $p_j$. We resolve any cylic instances by removing edges where publication year$(p_j)$ exceeds publication year$(p_i)$. % better word for "cylic instances" - cylic problems or something idk
-
-For each focal paper $p_i$, define its parent set $\mathcal{P}(i)$ as cited predecessors retained after filtering. Papers with fewer than $k_{\min}$ valid parents are kept in the corpus for descriptive analysis but excluded from inheritance regression to avoid unstable estimates. % why the last statement? Why would they be unstable? Why couldn't they be used. Do we need to even note k_min ? 
+For each citation ($p_j\in \mathcal{P}(i)$) of paper $p_i$ can be connected with a directed edge ($j\to i$) to build up a \textit{Directed Acylic Graph} (DAG) with any circular citations are resolved by removing edges where publication year of $p_i$ exceeds that of $p_j$.
 
 \subsection{Inheritance inference}
 For each eligible paper $p_i$, we model its embedding as
