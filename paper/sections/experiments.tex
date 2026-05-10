@@ -1,44 +1,49 @@
-\subsection{Purpose of V\&V in this framework}
-% need to make this all more research language - not scoped project language. V&V probably shoulnd't be used as a term.
-% This is verification and validation to be done when using the model. I want this section to be verification and validation of my model itself. This section should be me testing and providing evidence that this idea and framework is verified and validated by me to them - rather than an empty claim of something working. it isn't instructions for them to follow to decide whether it is working in their cases. For example, data integrity checks are something I should do when doing the code - but they have NOTHING to do with the idea that this framework works. If I was trying to prove it DIDN'T work, it would be valuable, but not for this paper trying to show that this is a useful framework.
-% Just to reitterate, this section isn't for the use of th emodel. It shouldn't be a guidelines of how to know if their research using the model should be published, THAT IS ON THEM. It is, instead, suppost to use the scientific method to prove, validate, verify, etc etc MY FRAMEWORK that I formulated here.
-Verification and validation are first-class requirements. Verification confirms that the framework is implemented and executed according to specification. Validation confirms that outputs are meaningful for interpreting knowledge flow.
+\subsection{Experimental objective}
+The experiments are designed to test the framework claims directly: that citation-conditioned semantic decomposition yields interpretable inheritance edges, meaningful residual contribution signals, and robust conclusions under perturbation.
 
-\subsection{Verification protocol}
-A framework execution is verified only when all of the following checks are satisfied:
+\subsection{Claim-driven evaluation skeleton}
 \begin{enumerate}
-    \item \textbf{Data integrity checks}: identifiers, metadata, and citation edges are internally consistent and auditable.
-    \item \textbf{Temporal consistency checks}: parent-child direction respects publication chronology.
-    \item \textbf{Embedding consistency checks}: vector norms, duplicate handling, and representational diagnostics are stable.
-    \item \textbf{Optimization checks}: solver convergence, constraint feasibility, and coefficient validity are confirmed.
-    \item \textbf{Reproducibility checks}: repeated runs under fixed configuration reproduce equivalent outputs within accepted numeric tolerance.
+    \item \textbf{Claim A: semantic reconstruction is informative rather than trivial.}
+    \begin{itemize}
+        \item \emph{Evidence target}: child embeddings are reconstructed by cited-parent mixtures with materially better fidelity than naive baselines.
+        \item \emph{Suggested tests}: reconstruction error against (i) uniform parent weights, (ii) random cited-parent subsets, and (iii) popularity-weighted mixtures.
+        \item \emph{Suggested metrics}: mean squared reconstruction error, cosine reconstruction score, and rank stability of high-contribution papers under metric choice.
+    \end{itemize}
+
+    \item \textbf{Claim B: inferred inheritance edges are numerically stable and interpretable.}
+    \begin{itemize}
+        \item \emph{Evidence target}: high-weight edges persist under parent-set perturbation and do not collapse under mild regularization changes.
+        \item \emph{Suggested tests}: bootstrap re-estimation over parent subsets; sensitivity sweep over $\lambda$.
+        \item \emph{Suggested metrics}: edge-weight confidence intervals, top-$k$ edge overlap across runs, and variance of node-level lineage concentration.
+    \end{itemize}
+
+    \item \textbf{Claim C: residual contribution captures signal distinct from citation popularity.}
+    \begin{itemize}
+        \item \emph{Evidence target}: contribution ranking is not reducible to citation count, venue prestige, or recency.
+        \item \emph{Suggested tests}: correlation and partial-correlation analyses against popularity-oriented indicators; matched-group comparisons.
+        \item \emph{Suggested metrics}: Spearman/Pearson correlation, explained variance gap versus baselines, and divergence profiles of top-ranked papers.
+    \end{itemize}
+
+    \item \textbf{Claim D: representation quality supports downstream inference.}
+    \begin{itemize}
+        \item \emph{Evidence target}: science-space structure is coherent enough for inheritance decomposition to be meaningful.
+        \item \emph{Suggested tests}: nearest-neighbor density summaries and domain-tagged low-dimensional maps for semantic clustering.
+        \item \emph{Suggested metrics}: density-distribution summaries, within-domain versus cross-domain neighborhood similarity, and cluster-separation diagnostics.
+    \end{itemize}
 \end{enumerate}
 
-\subsection{Validation protocol}
-Validation is performed with triangulated evidence rather than a single benchmark label:
-\begin{enumerate}
-    \item \textbf{Reconstruction fidelity}: evaluate the degree to which parent mixtures explain child embeddings.
-    \item \textbf{Stability under perturbation}: re-estimate inheritance under parent-set resampling to characterize uncertainty.
-    \item \textbf{Interpretive plausibility}: inspect high- and low-contribution cases for consistency with domain expectations.
-    \item \textbf{Divergence profiling}: compare contribution rankings with popularity-oriented baselines to detect distinct signal content.
-\end{enumerate}
-
-\subsection{Acceptance criteria for publishable use}
-Outputs are considered publication-ready only if:
+\subsection{Minimum evidence package for the draft}
 \begin{itemize}
-    \item verification checks pass,
-    \item uncertainty is reported for non-robust estimates,
-    \item interpretive claims remain consistent with limitations,
-    \item and analyses are reproducible from documented inputs and parameters.
+    \item Reconstruction-fidelity table with baseline comparisons.
+    \item Inheritance-stability table (bootstrap confidence intervals and overlap statistics).
+    \item Contribution-versus-popularity divergence analysis.
+    \item Domain-tagged semantic map and nearest-neighbor density summary.
 \end{itemize}
 
-\subsection{Failure modes to disclose}
-Any report using this framework must disclose major risks that can alter interpretation:
+\subsection{Failure and limitation disclosure template}
 \begin{itemize}
-    \item missing or noisy citation edges,
-    \item embedding degradation for domain-specific language,
-    \item collinearity among parents,
-    \item and instability of weak inheritance edges.
+    \item Missing or noisy citation edges that alter parent sets.
+    \item Embedding degradation for domain-specific language and terminology drift.
+    \item Collinearity-driven instability in weak inheritance edges.
+    \item Interpretation risk where residual signal may conflate novelty and representation artifacts.
 \end{itemize}
-
-This disclosure requirement is part of the framework definition, not an optional reporting preference.

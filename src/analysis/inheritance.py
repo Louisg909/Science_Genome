@@ -87,6 +87,9 @@ def solve_inheritance(
         raise ValueError("parent_matrix rows must match target embedding size")
 
     num_parents = parents.shape[1]
+    # We intentionally skip inheritance fitting for papers without a meaningful
+    # cited-parent set. This keeps coefficient estimation numerically stable and
+    # avoids interpreting degenerate parent mixtures as substantive lineage.
     if num_parents == 0:
         residual = target.copy()
         return InheritanceResult(

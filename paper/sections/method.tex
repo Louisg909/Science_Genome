@@ -48,16 +48,16 @@ The Shapley attribution of parent paper \(j\) to target paper \(i\) is therefore
 \begin{equation}
 \phi_{ij}
 =
-\sum_{S\subseteq \mathcal{P}(i)\setminus\{j\}}&
+\sum_{S\subseteq \mathcal{P}(i)\setminus\{j\}}
 \frac{|S|!(|\mathcal{P}(i)|-|S|-1)!}
 {|\mathcal{P}(i)|!}
-    \Delta_i(j,S)
+    \Delta_i(j,s)
 \end{equation}
-where:
 \begin{equation}
-    \Delta_i(j,S)=V_i(S\cup \{j\})-V_i(S)
+    \Delta_i(j,s) = V_i(S\cup\{j\})-V_i(S)
 \end{equation}
-and \(V_i(S)\) measures how well subset \(S\) reconstructs target paper \(i\), and is defined as:
+where \(V_i(S)\) measures how well subset \(S\) reconstructs target paper \(i\), and is defined as:
+
 \begin{equation}
 V_i(S)
 =
@@ -68,6 +68,7 @@ p_i-
 \sum_{p_j\in S} w_{ij}p_j
 \right\|^2
 \end{equation}
+
 
 \subsection{Handling non-orthogonal parents} % this whole section needs exploring - understanding, verifying, and explaining in a way that I understand and that is applicable to this problem. After researching, it may likely be something I will rewrite / redesign the previous sub section with in mind.
 Cited parents are typically correlated. To avoid unstable coefficient allocation, we combine three controls: (i) ridge regularization ($\lambda>0$), (ii) optional parent-pruning by semantic redundancy threshold, and (iii) bootstrap re-estimation over parent subsets to compute confidence intervals for $w_{ij}$. We report both point estimates and uncertainty to distinguish robust inheritance edges from ill-conditioned assignments.
