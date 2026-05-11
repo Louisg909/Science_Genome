@@ -8,8 +8,12 @@ from .lineage_metrics import aggregate_cross_field_transfer, build_lineage_analy
 from .citation_dag import build_citation_dag, enforce_acyclicity_by_time
 from .inheritance import InheritanceResult, solve_inheritance
 from .shapley import estimate_shapley_contributions, reconstruction_utility
-from .inheritance_pipeline import PaperInheritanceFit, fit_inheritance_for_corpus
 from .validation import generate_validation_report
+from .inheritance_pipeline import (
+    PaperInheritanceFit,
+    citation_edges_to_parent_adjacency,
+    fit_inheritance_for_corpus,
+)
 from .structure import (
     embedding_norm_diagnostics,
     nearest_neighbor_density,
@@ -28,6 +32,7 @@ __all__ = [
     "enforce_acyclicity_by_time",
     "embedding_norm_diagnostics",
     "fit_inheritance_for_corpus",
+    "citation_edges_to_parent_adjacency",
     "nearest_neighbor_density",
     "nearest_neighbors",
     "residual_metrics",
