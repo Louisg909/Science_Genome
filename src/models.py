@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -11,3 +11,4 @@ class Paper:
     abstract: str
     year: int | None
     references: List[str]
+    field_label: Optional[str] = None
