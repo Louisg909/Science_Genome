@@ -7,7 +7,7 @@ This contract translates the project’s research objectives into concrete, test
 All analysis implementations are expected to accept and version the following input classes:
 
 1. **arXiv metadata/text**
-   - Minimum fields: paper identifier, title, authors, timestamp, abstract/full text (as available), categories.
+   - Minimum fields: paper identifier, title, authors, timestamp, abstract, categories.
 2. **Citation edges**
    - Directed graph edges `citing_paper -> cited_paper` with source provenance and extraction confidence.
 3. **Domain labels**
