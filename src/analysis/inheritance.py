@@ -314,10 +314,25 @@ def solve_inheritance(target_embedding: np.ndarray, parent_matrix: np.ndarray, *
     weights = np.zeros(num_parents, dtype=float)
     weights[active_idx] = active_weights
 
+<<<<<< bryani/add-validation-module-and-tests
+    weights = np.zeros(num_parents, dtype=float)
+    weights[active_idx] = active_weights
+
+    if random_state is not None:
+        rng = np.random.default_rng(random_state)
+        weights = weights + 1e-12 * rng.standard_normal(num_parents)
+        if constraint == "simplex":
+            weights = _project_to_simplex(weights)
+        elif constraint == "capped_simplex":
+            weights = _project_to_capped_simplex(weights)
+        else:
+            weights = np.maximum(weights, 0.0)
+======
 <<<<<< bryani/fix-inheritance-logic-and-add-tests
     weights = np.zeros(num_parents, dtype=float)
     weights[active_idx] = active_weights
 
+>>>>>> main
     samples = np.zeros((max(bootstrap_samples, 1), num_parents), dtype=float)
     samples[0] = weights
     selection_counts = (weights > 0).astype(float)
