@@ -181,6 +181,8 @@ def _solve_weights(
 
         if constraint == "simplex":
             candidate = _project_to_simplex(candidate)
+        elif constraint == "capped_simplex":
+            candidate = _project_to_capped_simplex(candidate)
         else:
             candidate = np.maximum(candidate, 0.0)
 
@@ -264,18 +266,8 @@ def solve_inheritance(
         random_state=random_state,
     )
 
-    if random_state is not None:
-        rng = np.random.default_rng(random_state)
-        weights = weights + 1e-12 * rng.standard_normal(num_parents)
-        if constraint == "simplex":
-            weights = _project_to_simplex(weights)
-        elif constraint == "capped_simplex":
-            weights = _project_to_capped_simplex(weights)
-        else:
-            weights = np.maximum(weights, 0.0)
-    else:
-        weights = np.zeros(num_parents, dtype=float)
-        weights[active_idx] = active_weights
+    weights = np.zeros(num_parents, dtype=float)
+    weights[active_idx] = active_weights
 
     samples = np.zeros((max(bootstrap_samples, 1), num_parents), dtype=float)
     samples[0] = weights
@@ -316,12 +308,6 @@ def solve_inheritance(
         weight_ci_upper = weights.copy()
         selection_frequency = (weights > 0).astype(float)
 
-        if constraint == "simplex":
-            candidate = _project_to_simplex(candidate)
-        elif constraint == "capped_simplex":
-            candidate = _project_to_capped_simplex(candidate)
-        else:
-            candidate = np.maximum(candidate, 0.0)
 
     shapley_contributions = np.zeros(num_parents, dtype=float)
     if compute_shapley:
