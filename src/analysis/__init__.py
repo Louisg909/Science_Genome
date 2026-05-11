@@ -9,6 +9,7 @@ from .citation_dag import build_citation_dag, enforce_acyclicity_by_time
 from .inheritance import InheritanceResult, solve_inheritance
 from .shapley import estimate_shapley_contributions, reconstruction_utility
 from .inheritance_pipeline import PaperInheritanceFit, fit_inheritance_for_corpus
+from .validation import generate_validation_report
 from .structure import (
     embedding_norm_diagnostics,
     nearest_neighbor_density,
@@ -34,4 +35,5 @@ __all__ = [
     "solve_inheritance",
     "estimate_shapley_contributions",
     "reconstruction_utility",
+    "generate_validation_report",
 ]

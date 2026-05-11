@@ -80,3 +80,27 @@ PY`
 - `src/analysis/structure.py` – compute similarity matrices and nearest neighbours.
 - `src/visualisation/plots.py` – plot reduced embeddings with titles as labels.
 - `src/storage.py` – save/load scraped papers to JSON so you can reuse a local corpus.
+
+
+## Validation & verification entrypoint
+
+Use `src.analysis.validation.generate_validation_report` to produce a single structured V&V artifact that bundles:
+
+- embedding diagnostics (`embedding_norm_diagnostics`, `nearest_neighbor_density`),
+- solver convergence plus conditioning summaries,
+- uncertainty outputs (CI widths and parent selection frequency),
+- lineage metric sanity checks.
+
+Example:
+
+```python
+from src.analysis import generate_validation_report, solve_inheritance
+
+solved = solve_inheritance(target_embedding, parent_matrix, random_state=17, bootstrap_samples=100)
+report = generate_validation_report(
+    embeddings=embedding_matrix,
+    inheritance_result=solved,
+    parent_matrix=parent_matrix,
+    lineage_records=[{"paper_id": "p1", "weights": [0.7, 0.3]}],
+)
+```

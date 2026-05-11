@@ -47,3 +47,14 @@ The experiments are designed to test the framework claims directly: that citatio
     \item Collinearity-driven instability in weak inheritance edges.
     \item Interpretation risk where residual signal may conflate novelty and representation artifacts.
 \end{itemize}
+
+
+\subsection{Implementation mapping for reproducible evidence}
+The claim-linked evidence package is implemented as callable code paths:
+\begin{itemize}
+    \item Embedding diagnostics and density summaries: \texttt{src.analysis.structure.embedding\_norm\_diagnostics} and \texttt{src.analysis.structure.nearest\_neighbor\_density}.
+    \item Solver convergence and conditioning summaries: \texttt{src.analysis.validation.generate\_validation\_report} (solver section).
+    \item Uncertainty outputs (confidence-interval width and selection frequency): \texttt{src.analysis.validation.generate\_validation\_report} (uncertainty section).
+    \item Lineage sanity checks: \texttt{src.analysis.validation.generate\_validation\_report} (lineage\_sanity section).
+\end{itemize}
+This mapping ensures each narrative claim can be traced to a deterministic programmatic report artifact.

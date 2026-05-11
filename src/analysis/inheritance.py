@@ -264,6 +264,9 @@ def solve_inheritance(
         random_state=random_state,
     )
 
+    weights = np.zeros(num_parents, dtype=float)
+    weights[active_idx] = active_weights
+
     if random_state is not None:
         rng = np.random.default_rng(random_state)
         weights = weights + 1e-12 * rng.standard_normal(num_parents)
@@ -273,10 +276,6 @@ def solve_inheritance(
             weights = _project_to_capped_simplex(weights)
         else:
             weights = np.maximum(weights, 0.0)
-    else:
-        weights = np.zeros(num_parents, dtype=float)
-        weights[active_idx] = active_weights
-
     samples = np.zeros((max(bootstrap_samples, 1), num_parents), dtype=float)
     samples[0] = weights
     selection_counts = (weights > 0).astype(float)
