@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 
 from src.analysis import attach_corpus_inheritance_metrics, residual_metrics, solve_inheritance
+from src.analysis.inheritance import bootstrap_weight_uncertainty, compute_parent_attribution, compute_residual, fit_weights
 
 
 def test_correlated_parents_instability_revealed_by_bootstrap():
@@ -170,3 +171,80 @@ def test_attach_corpus_inheritance_metrics_adds_fields():
         assert "residual_norm" in row
         assert "residual_direction" in row
         assert "novelty_score" in row
+
+
+def test_fit_weights_simplex_recovers_identity_target():
+    target = np.array([0.8, 0.2])
+    parents = np.eye(2)
+    weights, converged, _ = fit_weights(
+        target,
+        parents,
+        constraint="simplex",
+        sparsity=None,
+        l2_regularizer=1e-6,
+        max_iter=2000,
+        learning_rate=0.1,
+        tolerance=1e-12,
+        random_state=0,
+    )
+    assert converged
+    assert weights.sum() == pytest.approx(1.0, abs=1e-8)
+    assert np.allclose(weights, target, atol=1e-3)
+
+
+def test_compute_residual_matches_definition():
+    target = np.array([1.0, 0.0])
+    parents = np.eye(2)
+    weights = np.array([0.75, 0.25])
+    reconstruction, residual, objective = compute_residual(target, parents, weights, l2_regularizer=0.1)
+
+    assert np.allclose(reconstruction, np.array([0.75, 0.25]))
+    assert np.allclose(residual, np.array([0.25, -0.25]))
+    expected = 0.5 * np.dot(residual, residual) + 0.5 * 0.1 * np.dot(weights, weights)
+    assert objective == pytest.approx(expected)
+
+
+def test_bootstrap_weight_uncertainty_returns_point_estimate_without_sampling():
+    target = np.array([0.6, 0.4])
+    parents = np.eye(2)
+    point = np.array([0.6, 0.4])
+    stats = bootstrap_weight_uncertainty(
+        target=target,
+        parents=parents,
+        active_idx=np.array([0, 1]),
+        point_weights=point,
+        constraint="simplex",
+        sparsity=None,
+        l2_regularizer=1e-6,
+        max_iter=100,
+        learning_rate=0.1,
+        tolerance=1e-9,
+        random_state=1,
+        bootstrap_samples=0,
+        bootstrap_ci=(0.05, 0.95),
+    )
+    median, low, high, freq = stats
+    assert np.allclose(median, point)
+    assert np.allclose(low, point)
+    assert np.allclose(high, point)
+    assert np.allclose(freq, np.array([1.0, 1.0]))
+
+
+def test_compute_parent_attribution_off_returns_zeros():
+    target = np.array([0.6, 0.4])
+    parents = np.eye(2)
+    phi = compute_parent_attribution(
+        target=target,
+        parents=parents,
+        constraint="simplex",
+        sparsity=None,
+        l2_regularizer=1e-6,
+        max_iter=100,
+        learning_rate=0.1,
+        tolerance=1e-9,
+        random_state=1,
+        shapley_exact_threshold=8,
+        shapley_monte_carlo_samples=10,
+        compute_shapley=False,
+    )
+    assert np.allclose(phi, np.zeros(2))
