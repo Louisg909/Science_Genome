@@ -21,6 +21,7 @@ class InheritanceResult:
     objective: float
     converged: bool
     iterations: int
+    shapley_contributions: np.ndarray
     weight_median: np.ndarray
     weight_ci_lower: np.ndarray
     weight_ci_upper: np.ndarray
@@ -196,6 +197,9 @@ def solve_inheritance(
     learning_rate: float = 0.05,
     tolerance: float = 1e-10,
     random_state: Optional[int] = None,
+    shapley_exact_threshold: int = 8,
+    shapley_monte_carlo_samples: int = 256,
+    compute_shapley: bool = True,
     redundancy_threshold: Optional[float] = None,
     bootstrap_samples: int = 0,
     bootstrap_ci: tuple[float, float] = (0.05, 0.95),
@@ -231,6 +235,7 @@ def solve_inheritance(
             objective=0.5 * float(np.dot(residual, residual)),
             converged=True,
             iterations=0,
+            shapley_contributions=np.zeros(0, dtype=float),
             weight_median=zeros,
             weight_ci_lower=zeros,
             weight_ci_upper=zeros,
@@ -292,6 +297,25 @@ def solve_inheritance(
         weight_ci_upper = weights.copy()
         selection_frequency = (weights > 0).astype(float)
 
+
+    shapley_contributions = np.zeros(num_parents, dtype=float)
+    if compute_shapley:
+        from .shapley import estimate_shapley_contributions
+
+        shapley_contributions = estimate_shapley_contributions(
+            target_embedding=target,
+            parent_matrix=parents,
+            constraint=constraint,
+            sparsity=sparsity,
+            l2_regularizer=l2_regularizer,
+            max_iter=max_iter,
+            learning_rate=learning_rate,
+            tolerance=tolerance,
+            exact_threshold=shapley_exact_threshold,
+            monte_carlo_samples=shapley_monte_carlo_samples,
+            random_state=random_state,
+        )
+
     reconstruction = parents @ weights
     residual = target - reconstruction
     objective = 0.5 * float(np.dot(residual, residual)) + 0.5 * l2_regularizer * float(np.dot(weights, weights))
@@ -303,6 +327,7 @@ def solve_inheritance(
         objective=objective,
         converged=converged,
         iterations=iteration,
+        shapley_contributions=shapley_contributions,
         weight_median=weight_median,
         weight_ci_lower=weight_ci_lower,
         weight_ci_upper=weight_ci_upper,
