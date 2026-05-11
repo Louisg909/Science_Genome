@@ -1,68 +1,115 @@
-# Scope: Science Genome Research Project
+# Scope and Intent: Science Genome
 
-## 1) Purpose
-Define, test, and refine a research model for analyzing how scientific ideas originate, propagate, transform, and recombine across time.
+## Purpose of the Project
+The Science Genome project exists to design and propose an effective method for studying how scientific ideas evolve. It is a research effort focused on building a scientifically rigorous framework that researchers can use to run investigations and generate defensible insights.
 
-The project is not a literature search tool; it is an analytical framework for studying idea flow and evolution.
+The central objective is not software production; it is methodological development. The project should produce a clear way to represent, trace, and analyze the evolution of scientific ideas across time, while preserving interpretability and empirical discipline.
 
-## 2) Core Research Objective
-Develop a model that can support analysis of:
-- idea lineage (where ideas came from),
-- inheritance and persistence of traits,
-- emergence of new traits,
-- divergence/convergence across branches or domains,
-- author-level and stream-level contributions,
-- temporal evolution of scientific domains.
+## Relationship Between Paper and Code
+The paper and the code serve distinct but complementary roles.
 
-## 3) Validation Objective (V&V)
-A first-class project goal is **verification and validation** of the model’s ability to analyze truth-relevant structure in scientific knowledge flow.
+- **The paper is the primary source of truth.**
+- **The code is an executable companion to the paper.**
 
-This includes:
-- verifying that the model behaves as intended,
-- validating that outputs are meaningful for research interpretation,
-- characterizing confidence, limits, and failure modes.
+The paper provides the conceptual and mathematical formulation. The code realizes that formulation so it can be explored, tested, inspected, and used to generate supporting evidence.
 
-## 4) Primary Users
-Primary users are researchers and analysts who want to investigate how ideas flow and evolve.
+The code does **not** replace the mathematics, and the paper’s conceptual legitimacy does **not** depend on the software. Instead, the implementation supports the research process by:
 
-This project is intended for deep analytical use, not for casual domain search or paper discovery workflows.
+- checking whether the proposed mathematics coheres in practice,
+- generating figures, statistics, and diagnostics,
+- enabling exploratory investigations of idea evolution,
+- helping refine the framework through empirical feedback.
 
-## 5) Scope Boundaries (In Scope)
-In scope is the research framework needed to:
-1. Represent scientific artifacts and their relationships.
-2. Analyze semantic and lineage structure jointly.
-3. Generate interpretable evidence for idea-flow hypotheses.
-4. Compare branches/domains/streams over time.
-5. Evaluate model quality through explicit V&V.
-6. Support reproducible research outputs.
+In short, the code should make the framework tangible without becoming the framework itself.
 
-## 6) Out of Scope
-- Building a production search engine or discovery assistant.
-- Making definitive causal claims about intellectual influence.
-- Replacing expert judgment in scientific interpretation.
-- Constraining the project to any single model family, embedding model, or implementation choice.
-- Heavy product/platform expansion not required for core research goals.
+## Purpose of the Paper
+The paper should clearly and concisely present the proposed method and provide evidence for its legitimacy and robustness in producing meaningful insights.
 
-## 7) Scope Principles (Solution-Agnostic)
-1. **Question-first**: research questions define requirements; implementations are replaceable.
-2. **Method-agnostic**: model/component choices may change when better aligned with objectives.
-3. **Evidence-first**: outputs must support analytical interpretation, not just computation.
-4. **V&V-driven**: model credibility depends on explicit verification and validation.
-5. **Reproducibility**: results must be traceable and repeatable.
-6. **Lean execution**: prioritize the minimum system needed to answer the research questions well.
+Its communication priorities, in decreasing order, are to:
 
-## 8) Decision Test for Future Work
-A proposed change is in scope only if it improves at least one of:
-- idea-flow analysis capability,
-- truth-oriented V&V quality,
-- interpretability for researchers,
-- reproducibility of research outcomes.
+1. reassure the reader of correctness, robustness, and confidence in accurate formulation,
+2. showcase the framework and its analytical structure,
+3. excite the reader about what the method makes possible,
+4. excite the reader about the method’s broader potential.
 
-If it does not, it should be deprioritized or treated as a separate scope.
+The introduction and methodology sections define the conceptual center of gravity for this project and should guide scope decisions.
 
-## 9) Success Criteria
-The project is successful when researchers can:
-1. Formulate idea-flow hypotheses.
-2. Use the model to examine those hypotheses across lineage, semantics, authors, and time.
-3. Understand model confidence and limitations through V&V artifacts.
-4. Reproduce and scrutinize results.
+## Purpose of the Code
+The codebase exists to support the paper by implementing its conceptual and mathematical framework as research-grade executable artifacts.
+
+Its value is in enabling verification, demonstration, and refinement of the proposed method—not in becoming an independent software product.
+
+## Design Philosophy
+The code should be **clear, concise, and correct**. Every implementation choice should directly support research intent.
+
+No line of code should exist only for speculative flexibility, architectural neatness, or future features that are not currently required.
+
+Correctness means:
+
+- faithfulness to the paper,
+- transparent inspectability,
+- traceability from concepts and equations to implementation and outputs.
+
+Where possible, names and abstractions in code should mirror the conceptual objects in the paper.
+
+Preferred trade-offs:
+
+```text
+Clarity over speed.
+Minimalism over extensibility.
+Ease of use over software completeness.
+Exploratory flexibility over rigid formalisation.
+Conceptual abstraction over procedural sprawl.
+Paper-alignment over independent software design.
+```
+
+Abstraction should be used only when it improves conceptual clarity or removes repeated mathematical logic. The code should be conceptually abstract, not architecturally abstract.
+
+Dependencies should be minimal. Logic should be simple. Modules should be small. The code should avoid hidden machinery, unnecessary robustness layers, and feature creep.
+
+## Scope and Non-Goals
+This is research code for developing, testing, and demonstrating the proposed framework.
+
+- **Primary user:** the author during investigation and paper development.
+- **Secondary users:** researchers who may inspect, adapt, or reuse parts of the implementation.
+
+### In Scope
+
+```text
+Implementing the mathematical framework.
+Testing whether the mathematics works coherently in practice.
+Producing figures, statistics, and diagnostics for the paper.
+Supporting exploratory investigation.
+Making the framework inspectable and reusable in parts.
+Keeping the implementation aligned with the paper.
+```
+
+### Out of Scope
+
+```text
+Production-grade software.
+A general-purpose scientometrics toolkit.
+A web application.
+A graphical user interface.
+Large-scale automation.
+Enterprise robustness.
+Plugin systems or broad extensibility layers.
+Premature optimisation.
+Features not required by the research.
+```
+
+## Scope Test for New Work
+A proposed change is in scope only if it directly improves at least one of:
+
+- fidelity of implementation to the paper,
+- rigor or clarity of verification/validation,
+- quality of figures, statistics, or diagnostics that support the paper,
+- usefulness for exploratory scientific-idea evolution analysis,
+- inspectability and reproducibility of research outputs.
+
+If it does not, it should be deferred or treated as a separate effort.
+
+## Success Condition
+The project succeeds when it remains a lean executable realization of the paper’s ideas and helps answer the research question with credible, inspectable evidence.
+
+It should strengthen confidence in the framework, support method refinement, and produce artifacts that make the proposed approach scientifically understandable and practically investigable.
