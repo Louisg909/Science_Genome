@@ -314,6 +314,72 @@ def solve_inheritance(target_embedding: np.ndarray, parent_matrix: np.ndarray, *
     weights = np.zeros(num_parents, dtype=float)
     weights[active_idx] = active_weights
 
+<<<<<< bryani/fix-inheritance-logic-and-add-tests
+    weights = np.zeros(num_parents, dtype=float)
+    weights[active_idx] = active_weights
+
+    samples = np.zeros((max(bootstrap_samples, 1), num_parents), dtype=float)
+    samples[0] = weights
+    selection_counts = (weights > 0).astype(float)
+
+    if bootstrap_samples > 0:
+        low_q, high_q = bootstrap_ci
+        if not 0.0 <= low_q < high_q <= 1.0:
+            raise ValueError("bootstrap_ci must be valid quantiles")
+        rng = np.random.default_rng(random_state)
+        for b in range(bootstrap_samples):
+            draw = rng.choice(active_idx, size=active_idx.size, replace=True)
+            unique, first_pos = np.unique(draw, return_index=True)
+            subset = unique[np.argsort(first_pos)]
+            sub_parents = parents[:, subset]
+            sub_weights, _, _ = _solve_weights(
+                target,
+                sub_parents,
+                constraint=constraint,
+                sparsity=sparsity,
+                l2_regularizer=l2_regularizer,
+                max_iter=max_iter,
+                learning_rate=learning_rate,
+                tolerance=tolerance,
+                random_state=None if random_state is None else random_state + b + 1,
+            )
+            expanded = np.zeros(num_parents, dtype=float)
+            expanded[subset] = sub_weights
+            samples[b] = expanded
+            selection_counts += (expanded > 0).astype(float)
+        weight_median = np.median(samples, axis=0)
+        weight_ci_lower = np.quantile(samples, low_q, axis=0)
+        weight_ci_upper = np.quantile(samples, high_q, axis=0)
+        selection_frequency = selection_counts / float(bootstrap_samples + 1)
+    else:
+        weight_median = weights.copy()
+        weight_ci_lower = weights.copy()
+        weight_ci_upper = weights.copy()
+        selection_frequency = (weights > 0).astype(float)
+
+
+    shapley_contributions = np.zeros(num_parents, dtype=float)
+    if compute_shapley:
+        from .shapley import estimate_shapley_contributions
+
+        shapley_contributions = estimate_shapley_contributions(
+            target_embedding=target,
+            parent_matrix=parents,
+            constraint=constraint,
+            sparsity=sparsity,
+            l2_regularizer=l2_regularizer,
+            max_iter=max_iter,
+            learning_rate=learning_rate,
+            tolerance=tolerance,
+            exact_threshold=shapley_exact_threshold,
+            monte_carlo_samples=shapley_monte_carlo_samples,
+            random_state=random_state,
+        )
+
+    reconstruction = parents @ weights
+    residual = target - reconstruction
+    objective = 0.5 * float(np.dot(residual, residual)) + 0.5 * l2_regularizer * float(np.dot(weights, weights))
+======
     weight_median, weight_ci_lower, weight_ci_upper, selection_frequency = bootstrap_weight_uncertainty(
         target=target, parents=parents, active_idx=active_idx, point_weights=weights, constraint=constraint,
         sparsity=sparsity, l2_regularizer=l2_regularizer, max_iter=max_iter, learning_rate=learning_rate,
@@ -326,6 +392,7 @@ def solve_inheritance(target_embedding: np.ndarray, parent_matrix: np.ndarray, *
         compute_shapley=compute_shapley,
     )
     reconstruction, residual, objective = compute_residual(target, parents, weights, l2_regularizer)
+>>>>> main
 
     return InheritanceResult(
         weights=weights,

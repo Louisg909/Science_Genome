@@ -173,6 +173,49 @@ def test_attach_corpus_inheritance_metrics_adds_fields():
         assert "novelty_score" in row
 
 
+<<<<<< bryani/fix-inheritance-logic-and-add-tests
+def test_capped_simplex_enforces_sum_leq_one_in_solver_step():
+    target = np.array([2.0, 2.0])
+    parents = np.eye(2)
+
+    result = solve_inheritance(target, parents, constraint="capped_simplex")
+
+    assert np.all(result.weights >= -1e-12)
+    assert result.weights.sum() <= 1.0 + 1e-8
+    assert result.weights.sum() == pytest.approx(1.0, abs=1e-6)
+
+
+def test_random_state_path_is_stable_without_name_errors():
+    target = np.array([0.8, 0.1, 0.1])
+    parents = np.eye(3)
+
+    r1 = solve_inheritance(target, parents, constraint="capped_simplex", random_state=123)
+    r2 = solve_inheritance(target, parents, constraint="capped_simplex", random_state=123)
+
+    assert np.allclose(r1.weights, r2.weights)
+    assert np.allclose(r1.residual, r2.residual)
+
+
+def test_pruned_parent_edge_case_with_full_prune_returns_residual():
+    target = np.array([1.0, 0.0])
+    parents = np.array([[1.0, 1.0], [0.0, 0.0]])
+
+    result = solve_inheritance(target, parents, redundancy_threshold=0.0)
+
+    assert result.active_parent_mask.sum() == 1
+    assert result.weights.shape == (2,)
+    assert np.count_nonzero(result.weights) == 1
+
+
+def test_no_parent_and_bootstrap_zero_branch_has_no_undefined_candidate_failures():
+    target = np.array([0.4, -0.2])
+    parents = np.empty((2, 0))
+
+    result = solve_inheritance(target, parents, bootstrap_samples=0, random_state=7)
+
+    assert result.weights.size == 0
+    assert np.allclose(result.residual, target)
+======
 def test_fit_weights_simplex_recovers_identity_target():
     target = np.array([0.8, 0.2])
     parents = np.eye(2)
@@ -248,3 +291,7 @@ def test_compute_parent_attribution_off_returns_zeros():
         compute_shapley=False,
     )
     assert np.allclose(phi, np.zeros(2))
+>>>>>>Replace the erroneous post-solve random-state/jitter block in solve_inheritance with deterministic expansion: initialize weights = np.zeros(num_parents) and assign weights[active_idx] = active_weights.
+Remove the stray re-projection block in the bootstrap_samples == 0 branch that referenced an undefined candidate and was logically misplaced.
+Update _solve_weights to explicitly enforce projections on each iteration: simplex uses _project_to_simplex, capped_simplex uses _project_to_capped_simplex, and nonnegative uses np.maximum(..., 0.0).
+Add focused regression tests in tests/test_inheritance.py covering capped-simplex sum behavior, random_state path stability, pruned/no-parent edge cases, and absence of undefined-variable failures in the bootstrap=0 path. main
