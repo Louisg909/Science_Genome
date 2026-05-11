@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping
+from typing import Any, Dict, Sequence
 
 import numpy as np
 
@@ -33,18 +34,61 @@ def _paper_id(paper: Any) -> str:
     return identifier.strip()
 
 
-def _parent_ids_for_focal(dag: Any, focal_paper_id: str) -> list[str]:
+DAGAdjacency = Mapping[str, Sequence[str]]
+
+
+def citation_edges_to_parent_adjacency(edges: Iterable[tuple[str, str]]) -> dict[str, list[str]]:
+    """Convert citation edges into canonical child->parents adjacency mapping.
+
+    Canonical DAG schema:
+      - Mapping from `child_paper_id` -> ordered sequence of `parent_paper_id` strings.
+      - Missing children imply no parents.
+    """
+
+    adjacency: dict[str, list[str]] = {}
+    for edge in edges:
+        if not isinstance(edge, tuple) or len(edge) != 2:
+            raise TypeError("Each DAG edge must be a (parent_id, child_id) tuple.")
+        parent_id, child_id = edge
+        if not isinstance(parent_id, str) or not parent_id.strip():
+            raise TypeError("Each edge parent_id must be a non-empty string.")
+        if not isinstance(child_id, str) or not child_id.strip():
+            raise TypeError("Each edge child_id must be a non-empty string.")
+        adjacency.setdefault(child_id, []).append(parent_id)
+    return adjacency
+
+
+def _normalize_parent_adjacency(dag: DAGAdjacency | Any) -> dict[str, list[str]]:
     if hasattr(dag, "predecessors"):
-        return list(dag.predecessors(focal_paper_id))
-    if isinstance(dag, Mapping):
-        return list(dag.get(focal_paper_id, ()))
-    raise TypeError("dag must provide either a 'predecessors' method or mapping interface.")
+        raise TypeError(
+            "dag must be a mapping of child_id -> sequence[parent_id]. "
+            "For edge lists, use citation_edges_to_parent_adjacency()."
+        )
+    if not isinstance(dag, Mapping):
+        raise TypeError(
+            "dag must be a mapping of child_id -> sequence[parent_id]. "
+            "For edge lists, use citation_edges_to_parent_adjacency()."
+        )
+
+    normalized: dict[str, list[str]] = {}
+    for child_id, parent_ids in dag.items():
+        if not isinstance(child_id, str) or not child_id.strip():
+            raise TypeError("Each dag key (child_id) must be a non-empty string.")
+        if isinstance(parent_ids, (str, bytes)) or not isinstance(parent_ids, Sequence):
+            raise TypeError("Each dag value must be a sequence of parent_id strings.")
+        coerced: list[str] = []
+        for parent_id in parent_ids:
+            if not isinstance(parent_id, str) or not parent_id.strip():
+                raise TypeError("Each parent_id in dag values must be a non-empty string.")
+            coerced.append(parent_id)
+        normalized[child_id] = coerced
+    return normalized
 
 
 def fit_inheritance_for_corpus(
     papers: Sequence[Any],
     embeddings: np.ndarray,
-    dag: Any,
+    dag: DAGAdjacency,
     *,
     constraint: Constraint = "simplex",
     sparsity: int | None = None,
@@ -55,6 +99,13 @@ def fit_inheritance_for_corpus(
     random_state: int | None = None,
 ) -> Dict[str, PaperInheritanceFit]:
     """Fit inheritance decomposition for each paper in a corpus.
+
+    Accepted DAG schema:
+      - `dag` is a mapping: `child_paper_id -> sequence[parent_paper_id]`.
+      - Both keys and parent IDs must be non-empty strings.
+      - Children omitted from the mapping are treated as having zero parents.
+      - To use `build_citation_dag` output (`list[tuple[parent, child]]`), first call
+        `citation_edges_to_parent_adjacency`.
 
     Returns a dictionary keyed by focal paper_id.
     """
@@ -68,9 +119,11 @@ def fit_inheritance_for_corpus(
     paper_ids = [_paper_id(paper) for paper in papers]
     index_by_id = {pid: idx for idx, pid in enumerate(paper_ids)}
 
+    parent_adjacency = _normalize_parent_adjacency(dag)
+
     results: Dict[str, PaperInheritanceFit] = {}
     for focal_idx, focal_paper_id in enumerate(paper_ids):
-        parent_ids = [pid for pid in _parent_ids_for_focal(dag, focal_paper_id) if pid in index_by_id]
+        parent_ids = [pid for pid in parent_adjacency.get(focal_paper_id, ()) if pid in index_by_id]
         parent_matrix = embedding_matrix[[index_by_id[pid] for pid in parent_ids]].T
         target_embedding = embedding_matrix[focal_idx]
 

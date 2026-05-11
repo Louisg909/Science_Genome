@@ -78,5 +78,6 @@ PY`
 - `src/embedding/basic.py` – convert papers to SciBERT embeddings (configurable tokenizer/model).
 - `src/dimension_reduction/basic.py` – reduce embedding dimensions with PCA, t-SNE, or UMAP.
 - `src/analysis/structure.py` – compute similarity matrices and nearest neighbours.
+- `src/analysis/inheritance_pipeline.py` – corpus-level inheritance fitting with canonical DAG schema `child_id -> [parent_id, ...]`; edge lists from `build_citation_dag` can be adapted using `citation_edges_to_parent_adjacency`.
 - `src/visualisation/plots.py` – plot reduced embeddings with titles as labels.
 - `src/storage.py` – save/load scraped papers to JSON so you can reuse a local corpus.
