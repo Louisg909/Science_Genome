@@ -8,7 +8,7 @@ from typing import Literal, Optional
 import numpy as np
 
 
-Constraint = Literal["simplex", "nonnegative"]
+Constraint = Literal["capped_simplex", "simplex", "nonnegative"]
 
 
 @dataclass(frozen=True)
@@ -88,6 +88,15 @@ def _project_to_simplex(vector: np.ndarray) -> np.ndarray:
     theta = (cumulative[rho_idx] - 1.0) / (rho_idx + 1)
     projected = np.maximum(vector - theta, 0.0)
     return projected
+
+
+def _project_to_capped_simplex(vector: np.ndarray) -> np.ndarray:
+    """Project vector onto the capped simplex: w >= 0 and sum(w) <= 1."""
+
+    nonnegative = np.maximum(vector, 0.0)
+    if nonnegative.sum() <= 1.0:
+        return nonnegative
+    return _project_to_simplex(vector)
 
 
 def _apply_sparsity(weights: np.ndarray, sparsity: Optional[int], constraint: Constraint) -> np.ndarray:
@@ -190,7 +199,7 @@ def solve_inheritance(
     target_embedding: np.ndarray,
     parent_matrix: np.ndarray,
     *,
-    constraint: Constraint = "simplex",
+    constraint: Constraint = "capped_simplex",
     sparsity: Optional[int] = None,
     l2_regularizer: float = 1e-6,
     max_iter: int = 5_000,
@@ -204,14 +213,14 @@ def solve_inheritance(
     bootstrap_samples: int = 0,
     bootstrap_ci: tuple[float, float] = (0.05, 0.95),
 ) -> InheritanceResult:
-    """Solve e_i ≈ P_i w_i under simplex/non-negative constraints.
+    """Solve e_i ≈ P_i w_i under capped-simplex/simplex/non-negative constraints.
 
     Optional parent pruning removes near-duplicate parent embeddings before fit.
     Optional bootstrap resampling over parent subsets yields uncertainty summaries.
     """
 
-    if constraint not in {"simplex", "nonnegative"}:
-        raise ValueError("constraint must be either 'simplex' or 'nonnegative'")
+    if constraint not in {"capped_simplex", "simplex", "nonnegative"}:
+        raise ValueError("constraint must be one of 'capped_simplex', 'simplex', or 'nonnegative'")
 
     target = np.asarray(target_embedding, dtype=float).reshape(-1)
     parents = np.asarray(parent_matrix, dtype=float)
@@ -255,8 +264,18 @@ def solve_inheritance(
         random_state=random_state,
     )
 
-    weights = np.zeros(num_parents, dtype=float)
-    weights[active_idx] = active_weights
+    if random_state is not None:
+        rng = np.random.default_rng(random_state)
+        weights = weights + 1e-12 * rng.standard_normal(num_parents)
+        if constraint == "simplex":
+            weights = _project_to_simplex(weights)
+        elif constraint == "capped_simplex":
+            weights = _project_to_capped_simplex(weights)
+        else:
+            weights = np.maximum(weights, 0.0)
+    else:
+        weights = np.zeros(num_parents, dtype=float)
+        weights[active_idx] = active_weights
 
     samples = np.zeros((max(bootstrap_samples, 1), num_parents), dtype=float)
     samples[0] = weights
@@ -297,6 +316,12 @@ def solve_inheritance(
         weight_ci_upper = weights.copy()
         selection_frequency = (weights > 0).astype(float)
 
+        if constraint == "simplex":
+            candidate = _project_to_simplex(candidate)
+        elif constraint == "capped_simplex":
+            candidate = _project_to_capped_simplex(candidate)
+        else:
+            candidate = np.maximum(candidate, 0.0)
 
     shapley_contributions = np.zeros(num_parents, dtype=float)
     if compute_shapley:
