@@ -1,4 +1,5 @@
 from .inheritance import InheritanceResult, solve_inheritance
+from .shapley import estimate_shapley_contributions, reconstruction_utility
 from .structure import (
     embedding_norm_diagnostics,
     nearest_neighbor_density,
@@ -13,4 +14,6 @@ __all__ = [
     "nearest_neighbors",
     "similarity_matrix",
     "solve_inheritance",
+    "estimate_shapley_contributions",
+    "reconstruction_utility",
 ]
