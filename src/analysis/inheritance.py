@@ -28,6 +28,50 @@ class InheritanceResult:
     active_parent_mask: np.ndarray
 
 
+def residual_metrics(residual: np.ndarray, weights: np.ndarray) -> dict[str, np.ndarray | float]:
+    """Compute residual-derived inheritance metrics.
+
+    Returns:
+        residual_norm: L2 norm of residual.
+        residual_direction: Unit vector in residual direction (zeros when norm=0).
+        novelty_score: nu_i = ||r_i|| / (sum(w_i) + ||r_i||).
+    """
+
+    residual_arr = np.asarray(residual, dtype=float).reshape(-1)
+    weights_arr = np.asarray(weights, dtype=float).reshape(-1)
+
+    residual_norm = float(np.linalg.norm(residual_arr, ord=2))
+    if residual_norm > 0.0:
+        residual_direction = residual_arr / residual_norm
+    else:
+        residual_direction = np.zeros_like(residual_arr)
+
+    weight_sum = float(weights_arr.sum())
+    denominator = weight_sum + residual_norm
+    novelty_score = residual_norm / denominator if denominator > 0.0 else 0.0
+
+    return {
+        "residual_norm": residual_norm,
+        "residual_direction": residual_direction,
+        "novelty_score": novelty_score,
+    }
+
+
+def attach_corpus_inheritance_metrics(
+    corpus_outputs: list[dict],
+) -> list[dict]:
+    """Attach residual metrics to corpus-level inheritance records.
+
+    Each record must provide `weights` and `residual` arrays.
+    """
+
+    enriched_outputs: list[dict] = []
+    for record in corpus_outputs:
+        metrics = residual_metrics(record["residual"], record["weights"])
+        enriched_outputs.append({**record, **metrics})
+    return enriched_outputs
+
+
 def _project_to_simplex(vector: np.ndarray) -> np.ndarray:
     """Project vector onto the probability simplex."""
 
