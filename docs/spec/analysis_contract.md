@@ -50,12 +50,12 @@ All analysis implementations are expected to accept and version the following in
 - **Quality checks:** sensitivity to branching factor, robustness across window sizes.
 
 ### 5) 2D Maps
-- **Definition:** Low-dimensional representation for interpretability of semantic + lineage structure.
+- **Definition:** Two-dimensional representation for interpretability of semantic system. Showing papers plotted by embedding and coloured by discipline tag.
 - **Required fields:** `paper_id`, `x`, `y`, `domain_label`, `lineage_cluster`.
 - **Quality checks:** neighborhood stability, random-seed sensitivity, projection distortion diagnostics.
 
 ## V&V Output Contract
-
+<< If this is V&V as in what I am saying I want to do for the project - that is about validating the concept of the framework, not validating the code. If any of this is important for meeting the design intent though, keep it in. >>
 V&V is first-class and must produce explicit artifacts in every analysis run:
 
 1. **Diagnostics**
@@ -109,4 +109,6 @@ Each produced artifact must include or be accompanied by:
 - random seed policy,
 - schema version.
 
+<< Is this really lean?? including these versioning requirements? Or are they needed? if so, why?>>
 Recommended metadata artifact: `artifacts/run_manifest.json`.
+<< Hm? What is this for?? >>
