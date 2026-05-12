@@ -23,7 +23,10 @@ All analysis implementations are expected to accept and version the following in
 | Divergence/convergence across domains | Cross-field transfer function | Cross-domain transfer matrix and directional transfer statistics | `artifacts/metrics/cross_field_transfer.parquet`, `artifacts/figures/cross_field_transfer_heatmap.png` |
 | Branch concentration vs spread | Lineage concentration metric | Concentration indices per branch/domain/time window | `artifacts/metrics/lineage_concentration.parquet` |
 | Interpretable global structure | 2D mapping/reduction function | 2D embeddings/maps with lineage overlays and domain coloring | `artifacts/maps/idea_map_2d.parquet`, `artifacts/figures/idea_map_2d.png` |
+| How novel is an author's contributions? | Residual contribution score | Residual novelty across an author's papers | artifacts/metrics/author/[AUTHOR]-contribution-variety |
+| How varied are an author's contributions? | Residual contribution estimator | Residual novelty across an author's papers | artifacts/metrics/author/[AUTHOR]-contribution-variety |
 
+<< Question: What is parquet file type? Why is it needed here? And why is the `lineage_graph` a json? Also please check the last two entries I added to the table above - do they have a place here? Do they need re-writing or merging? What should all the entries be? I am imaginging doing this for a few authors to show how you can interpret author-level insights, rather than only system level insights of disciplines and globally.>>
 ## Core Output Contract
 
 ### 1) Parent Inheritance Scores
