@@ -13,6 +13,11 @@ All analysis implementations are expected to accept and version the following in
 3. **Domain labels**
    - Single- or multi-label domain assignments (e.g., categories/subfields) used for cross-field analysis.
 
+## Data Format Rationale
+- **Why Parquet for metric tables?** Parquet is a columnar, compressed format that is efficient for large analytical tables (fast filtering/aggregation, smaller storage footprint, stable schemas).
+- **Why JSON for `lineage_graph`?** A lineage graph is hierarchical/edge-list structured and often consumed by visualization or graph tooling; JSON is portable and human-inspectable for graph objects.
+- **Rule of thumb:** tabular outputs → Parquet; nested graph/config/manifest outputs → JSON.
+
 ## Objective-to-Output Mapping
 
 | Research objective | Required metric/function | Concrete software output(s) | Expected artifact file(s) |
@@ -23,10 +28,11 @@ All analysis implementations are expected to accept and version the following in
 | Divergence/convergence across domains | Cross-field transfer function | Cross-domain transfer matrix and directional transfer statistics | `artifacts/metrics/cross_field_transfer.parquet`, `artifacts/figures/cross_field_transfer_heatmap.png` |
 | Branch concentration vs spread | Lineage concentration metric | Concentration indices per branch/domain/time window | `artifacts/metrics/lineage_concentration.parquet` |
 | Interpretable global structure | 2D mapping/reduction function | 2D embeddings/maps with lineage overlays and domain coloring | `artifacts/maps/idea_map_2d.parquet`, `artifacts/figures/idea_map_2d.png` |
-| How novel is an author's contributions? | Residual contribution score | Residual novelty across an author's papers | artifacts/metrics/author/[AUTHOR]-contribution-variety |
-| How varied are an author's contributions? | Residual contribution estimator | Residual novelty across an author's papers | artifacts/metrics/author/[AUTHOR]-contribution-variety |
+| Author-level novelty profile (optional demonstrator) | Author aggregation over residual contribution | Per-author summary of median/variance/trajectory of residual novelty | `artifacts/metrics/authors/author_residual_profile.parquet` |
+| Author-level breadth/variety profile (optional demonstrator) | Author diversity/concentration over domains and lineage clusters | Per-author cross-domain and lineage-spread indicators | `artifacts/metrics/authors/author_variety_profile.parquet` |
 
-<< Question: What is parquet file type? Why is it needed here? And why is the `lineage_graph` a json? Also please check the last two entries I added to the table above - do they have a place here? Do they need re-writing or merging? What should all the entries be? I am imaginging doing this for a few authors to show how you can interpret author-level insights, rather than only system level insights of disciplines and globally.>>
+**Scope note:** the two author-level entries belong here if they are explicitly marked as optional demonstrators supporting interpretability. They should not replace the core system-level contract.
+
 ## Core Output Contract
 
 ### 1) Parent Inheritance Scores
@@ -50,13 +56,12 @@ All analysis implementations are expected to accept and version the following in
 - **Quality checks:** sensitivity to branching factor, robustness across window sizes.
 
 ### 5) 2D Maps
-- **Definition:** Two-dimensional representation for interpretability of semantic system. Showing papers plotted by embedding and coloured by discipline tag.
+- **Definition:** Two-dimensional representation for interpretability of semantic system, showing papers plotted by embedding and colored by discipline tag.
 - **Required fields:** `paper_id`, `x`, `y`, `domain_label`, `lineage_cluster`.
 - **Quality checks:** neighborhood stability, random-seed sensitivity, projection distortion diagnostics.
 
-## V&V Output Contract
-<< If this is V&V as in what I am saying I want to do for the project - that is about validating the concept of the framework, not validating the code. If any of this is important for meeting the design intent though, keep it in. >>
-V&V is first-class and must produce explicit artifacts in every analysis run:
+## Validation Outputs (Concept-Credibility V&V)
+Here V&V is interpreted as **validation of framework credibility and claim boundaries**, not just code correctness. These artifacts are still required because they operationalize design intent and non-goals.
 
 1. **Diagnostics**
    - Data integrity checks (missingness, graph consistency, label coverage).
@@ -81,6 +86,8 @@ V&V is first-class and must produce explicit artifacts in every analysis run:
 | “Ideas transfer from field A to field B over time.” | `compute_cross_field_transfer(...)` | `artifacts/metrics/cross_field_transfer.parquet` |
 | “Idea flow is highly concentrated in a small ancestor set.” | `compute_lineage_concentration(...)` | `artifacts/metrics/lineage_concentration.parquet` |
 | “The idea landscape shows interpretable clusters/bridges.” | `build_2d_idea_map(...)` | `artifacts/maps/idea_map_2d.parquet` + `artifacts/figures/idea_map_2d.png` |
+| “An author’s novelty profile varies across time/works.” (optional demonstrator claim) | `compute_author_residual_profile(...)` | `artifacts/metrics/authors/author_residual_profile.parquet` |
+| “An author’s contribution breadth spans/concentrates across fields.” (optional demonstrator claim) | `compute_author_variety_profile(...)` | `artifacts/metrics/authors/author_variety_profile.parquet` |
 | “Results are credible within stated limits.” | `run_validation_suite(...)` | `artifacts/validation/diagnostics.json`, `artifacts/validation/uncertainty_summary.parquet`, `artifacts/validation/failure_mode_flags.parquet` |
 
 ## Implementation Constraints (Explicit Non-Goals from `scope.md`)
@@ -109,6 +116,8 @@ Each produced artifact must include or be accompanied by:
 - random seed policy,
 - schema version.
 
-<< Is this really lean?? including these versioning requirements? Or are they needed? if so, why?>>
+These are intentionally lean: they are the minimum metadata needed to rerun, audit, and compare results across iterations without turning this project into heavy MLOps.
+
 Recommended metadata artifact: `artifacts/run_manifest.json`.
-<< Hm? What is this for?? >>
+- **Purpose:** one run-level index that links every output file to dataset snapshot, code revision, config, and seed policy.
+- **Benefit:** fast debugging, paper traceability, and reproducibility checks in one place.
